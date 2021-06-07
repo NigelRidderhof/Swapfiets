@@ -108,6 +108,31 @@ function main() {
     groundMesh.receiveShadow = true;
     scene.add( groundMesh );
 
+    // Audio instellingen voor het afspelen van geluidsbestanden. 
+    const listener = new THREE.AudioListener();
+    camera.add( listener );
+    sound = new THREE.Audio( listener );
+    const audioLoader = new THREE.AudioLoader();
+    audioLoader.load( '../assets/backgroundMusic.ogg', function( buffer ) {
+        sound.setBuffer( buffer );
+        sound.setVolume( 0.01 );
+        console.log(buffer);
+        // sound.autoplay = true;
+        // sound.play();
+
+    },
+        // onProgress callback
+        function ( xhr ) {
+            console.log( (xhr.loaded / xhr.total * 100) + '% loaded' );
+        },
+
+        // onError callback
+        function ( err ) {
+            console.log( 'Error loading sound.' );
+        }
+
+    );
+
     function resizeRendererToDisplaySize(renderer) {
         const canvas = renderer.domElement;
         const width = canvas.clientWidth;
@@ -122,27 +147,36 @@ function main() {
     class PickHelper {
         constructor() {
             this.raycaster = new THREE.Raycaster();
+            this.pickedObject = null;
+            this.pickedObjectSavedColor = 0;
         }
 
 
         pick(normalizedPosition, scene, camera) {
             if ( clickPermission ) {    // De if-statement die voorkomt dat je tijdens de animatie en afspelende audio deze opnieuw kunt starten.
+                clickPermission = false;
+
+                // restore the color if there is a picked object
+                if (this.pickedObject) {
+                    this.pickedObject = undefined;
+                }
 
                 // cast a ray through the frustum
                 this.raycaster.setFromCamera(normalizedPosition, camera);
                 // get the list of objects the ray intersected
                 const intersectedObjects = this.raycaster.intersectObjects(scene.children);
                 if (intersectedObjects.length) {
-
                     // pick the first object. It's the closest one
                     let button = intersectedObjects[0].object;
 
                     switch ( intersectedObjects[ 0 ].object.name ) {
                         case "buttonPhone":
-                            clickPermission = false;
                             controls.enabled = false;
+
                             button.material.color = floorGray;
                             console.log("Pressed");
+
+                            // sound.play(); 
         
                             createjs.Tween.get( camera.position )
                                 .to( { x: -.45, y: -0.5, z: 0.3 }, 3000, createjs.Ease.getPowInOut( 5 ) )
@@ -298,6 +332,8 @@ document.body.onload = () => {
 
 function startTheScreen() {
     // fullscreen();
+
+    sound.play();
 
     controls.enabled = false; 
     createjs.Tween.get( camera.position )
