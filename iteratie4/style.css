@@ -28,7 +28,6 @@ html, body {
     fill: white;
 }
 
-
 /* Het startscherm. */
 .startScreen {
     position: fixed;
@@ -45,6 +44,7 @@ html, body {
     width: 100vw;
     background-color: rgba(0, 0, 0, 1);
     z-index: -1;
+    opacity: 0.6;
 }
 .startText {
     color: white;
@@ -63,4 +63,91 @@ blue {
     width: 100%;
     height: 100%;
     display: block;
+}
+
+
+
+
+
+.loadingScreen {
+    position: fixed;
+    height: 100vh;
+    width: 100vw;
+    background-color: rgba(0, 0, 0, 1);
+    display: grid;
+    place-items: center;
+    cursor: pointer;
+    user-select:none;
+}
+
+.spinner {
+    position: relative;
+    width: 75px;
+    height: 75px;
+    margin-bottom: 30px;
+}
+.spinner:before, .spinner:after {
+    content: "";
+    display: block;
+    position: absolute;
+    border-width: 4px;
+    border-style: solid;
+    border-radius: 50%;
+}
+
+@-webkit-keyframes rotate-animation {
+    0% {
+        transform: rotate(0deg);
+    }
+    100% {
+        transform: rotate(360deg);
+    }
+    }
+    @keyframes rotate-animation {
+    0% {
+        transform: rotate(0deg);
+    }
+    100% {
+        transform: rotate(360deg);
+    }
+}
+@-webkit-keyframes anti-rotate-animation {
+    0% {
+        transform: rotate(0deg);
+    }
+    100% {
+        transform: rotate(-360deg);
+    }
+}
+@keyframes anti-rotate-animation {
+    0% {
+        transform: rotate(0deg);
+    }
+    100% {
+        transform: rotate(-360deg);
+    }
+}
+.spinner.spinner-1:before {
+    width: 117px;
+    height: 117px;
+    border-bottom-color: var(--blue);
+    border-right-color: var(--blue);
+    border-top-color: rgba(0, 169, 224, 0);
+    border-left-color: rgba(0, 169, 224, 0);
+    top: 0px;
+    left: 0px;
+    -webkit-animation: rotate-animation 1s linear 0s infinite;
+            animation: rotate-animation 1s linear 0s infinite;
+}
+.spinner.spinner-1:after {
+    width: 81.9px;
+    height: 81.9px;
+    border-bottom-color: var(--blue);
+    border-right-color: var(--blue);
+    border-top-color: rgba(0, 169, 224, 0);
+    border-left-color: rgba(0, 169, 224, 0);
+    top: 17.55px;
+    left: 17.55px;
+    -webkit-animation: anti-rotate-animation 0.85s linear 0s infinite;
+            animation: anti-rotate-animation 0.85s linear 0s infinite;
 }

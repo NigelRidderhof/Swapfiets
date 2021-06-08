@@ -24,7 +24,6 @@ function main() {
 
     // Camera instellingen.
     camera = new THREE.PerspectiveCamera( 70, window.innerWidth / window.innerHeight, 0.1, 1000 );
-    // camera.position.set( 0, 20, 170 );
     camera.position.set( 0, 0, 20 );
     cameraStartPosition = { x: 0, y: 0, z: 4 };      // Later nodig om de camera na een perspectiefverandering te resetten.
     camera.lookAt( scene.position );
@@ -38,21 +37,6 @@ function main() {
     controls.minDistance = 0.55;                    // Minimale inzoom.
     controls.maxDistance = 12;                      // Maximale uitzoom.
     controls.rotateSpeed = 0.7;                     // Maximale snelheid waarop je de scene kunt draaien. 
-
-    // Het inladen van het .glb bestand met de conductive wall.
-    loader = new GLTFLoader();
-    loader.load( '../assets/VanMoof_wheel.glb', function( gltf ){
-        gltf.scene.scale.set( 10, 10, 10 );
-        // gltf.scene.position.set( 0, -2.5, 0 );
-        gltf.scene.position.set( 0, 0, 0 );
-        gltfScene = gltf.scene;
-        gltf.scene.traverse( function ( object ) {
-            if ( object.isMesh ) {
-                object.castShadow = true;
-            }
-        } );
-        scene.add( gltf.scene );
-    });
 
     // Cirkels die gaan functioneren als knoppen. 
     const circle1 = new THREE.CircleBufferGeometry( 0.15, 32 );
@@ -94,7 +78,6 @@ function main() {
     dirLight.shadow.camera.far = 20;
     scene.add( dirLight );
 
-
     // De vloer.
     const groundMesh = new THREE.Mesh(
         new THREE.PlaneBufferGeometry( 45, 45 ),
@@ -108,29 +91,73 @@ function main() {
     groundMesh.receiveShadow = true;
     scene.add( groundMesh );
 
+    // Het inladen van de assets en wanneer dit klaar is het laadscherm uitfaden en verwijderen.
+    let audioBufferLoaded = false;
+    let restLoaded = false;
+    function checkAllLoaded () {
+        if (audioBufferLoaded && restLoaded ) {
+            console.log('all items loaded');
+            const loadingScreen = document.querySelector( '.loadingScreen' );
+            loadingScreen.style.opacity = 1;
+            createjs.CSSPlugin.install();
+            createjs.Tween.get(loadingScreen)
+                .to( { opacity: 0 }, 800 )
+                .call( () => { 
+                    loadingScreen.parentNode.removeChild ( loadingScreen ); 
+                } );
+            
+        } else {
+            console.log("Something hasn't loaded yet.");
+        }
+    }
+
+    // De manager die bijhoudt hoever assets zijn die de manager mee hebben gekregen.
+    const loadingManager = new THREE.LoadingManager();
+    loadingManager.onProgress = function (item, loaded, total) {
+        console.log(item, loaded, total);
+    };
+    loadingManager.onLoad = function  () {
+        restLoaded = true;
+        checkAllLoaded();
+    };
+    loadingManager.onError = function () {
+        console.log("There has been an error loading in assets.");
+    };
+
+
+    // Het inladen van het .glb bestand met de conductive wall.
+    loader = new GLTFLoader( loadingManager);
+    loader.load( '../assets/VanMoof_wheel.glb', function( gltf ){
+        gltf.scene.scale.set( 10, 10, 10 );
+        // gltf.scene.position.set( 0, -2.5, 0 );
+        gltf.scene.position.set( 0, 0, 0 );
+        gltfScene = gltf.scene;
+        gltf.scene.traverse( function ( object ) {
+            if ( object.isMesh ) {
+                object.castShadow = true;
+            }
+        } );
+        scene.add( gltf.scene );
+    });
+
     // Audio instellingen voor het afspelen van geluidsbestanden. 
     const listener = new THREE.AudioListener();
     camera.add( listener );
     sound = new THREE.Audio( listener );
     const audioLoader = new THREE.AudioLoader();
-    audioLoader.load( '../assets/backgroundMusic.ogg', function( buffer ) {
-        sound.setBuffer( buffer );
-        sound.setVolume( 0.01 );
-        console.log(buffer);
-        // sound.autoplay = true;
-        // sound.play();
-
-    },
-        // onProgress callback
-        function ( xhr ) {
-            console.log( (xhr.loaded / xhr.total * 100) + '% loaded' );
-        },
-
-        // onError callback
-        function ( err ) {
-            console.log( 'Error loading sound.' );
+    audioLoader.load(
+        '../assets/backgroundMusic.ogg', 
+        // '../assets/phone.mp3', 
+        function( buffer ) {
+            sound.setBuffer( buffer );
+            sound.setVolume( 0.1 );
+            sound.setLoop( true );
+            if (buffer) {
+                console.log(buffer);
+                audioBufferLoaded = true;
+                checkAllLoaded();
+            }
         }
-
     );
 
     function resizeRendererToDisplaySize(renderer) {
@@ -147,19 +174,11 @@ function main() {
     class PickHelper {
         constructor() {
             this.raycaster = new THREE.Raycaster();
-            this.pickedObject = null;
-            this.pickedObjectSavedColor = 0;
         }
 
 
         pick(normalizedPosition, scene, camera) {
             if ( clickPermission ) {    // De if-statement die voorkomt dat je tijdens de animatie en afspelende audio deze opnieuw kunt starten.
-                clickPermission = false;
-
-                // restore the color if there is a picked object
-                if (this.pickedObject) {
-                    this.pickedObject = undefined;
-                }
 
                 // cast a ray through the frustum
                 this.raycaster.setFromCamera(normalizedPosition, camera);
@@ -172,11 +191,11 @@ function main() {
                     switch ( intersectedObjects[ 0 ].object.name ) {
                         case "buttonPhone":
                             controls.enabled = false;
-
+                            clickPermission = false;
                             button.material.color = floorGray;
                             console.log("Pressed");
 
-                            // sound.play(); 
+                            sound.play(); 
         
                             createjs.Tween.get( camera.position )
                                 .to( { x: -.45, y: -0.5, z: 0.3 }, 3000, createjs.Ease.getPowInOut( 5 ) )
@@ -227,9 +246,7 @@ function main() {
         // pickHelper.pick(pickPosition, scene, camera);
 
         renderer.render(scene, camera);
-
         controls.update();
-
         requestAnimationFrame(render);
     }
     requestAnimationFrame(render);
@@ -256,6 +273,7 @@ function main() {
         pickPosition.x = -100000;
         pickPosition.y = -100000;
     }
+
     window.addEventListener('pointerdown', (event) => {
         setPickPosition(event);
         pickHelper.pick(pickPosition, scene, camera);
@@ -273,11 +291,9 @@ function main() {
     }, {
         passive: false
     });
-
     window.addEventListener('touchmove', (event) => {
         setPickPosition(event.touches[0]);
     });
-
     window.addEventListener('touchend', clearPickPosition);
 
     document.querySelector(".websiteLink").addEventListener('touchstart', (event) => {
@@ -292,49 +308,18 @@ function main() {
         document.querySelector(".startText").style.marginRight = '2.5em';
         cameraStartPosition = { x: 0, y: 0, z: 6.5 }; 
     }
-    
 }
 
 main();
 
 
 
-
-
-
 let startScreen = document.querySelector( ".startScreen" );
-let startBackground = document.querySelector( ".startBackground" );
-
-
 startScreen.addEventListener( 'pointerdown', startTheScreen );
 startScreen.addEventListener( 'touchstart', startTheScreen );
-// function fullscreen () {
-//     // document.body.requestFullscreen(); 
-//     if (document.body.requestFullscreen) {
-//         document.body.requestFullscreen();
-//     } else if (document.body.webkitRequestFullscreen) { /* Safari */
-//         document.body.webkitRequestFullscreen();
-//     } else if (document.body.msRequestFullscreen) { /* IE11 */
-//         document.body.msRequestFullscreen();
-//     }
-// }
-
-
-document.body.onload = () => { 
-    // Installeer en gebruik de CSS plugin om de zwarte start achtergrond na even gedeeltelijk doorzichtig te maken.
-    createjs.CSSPlugin.install();
-    startScreen.style.opacity = 1;
-    startBackground.style.opacity = 1;
-    setTimeout( () => { 
-        createjs.Tween.get(startBackground).to( { opacity: 0.6 }, 800);
-    }, 1000 ); 
-}
 
 function startTheScreen() {
-    // fullscreen();
-
-    sound.play();
-
+    startScreen.style.opacity = 1;
     controls.enabled = false; 
     createjs.Tween.get( camera.position )
         .to( cameraStartPosition, 3000, createjs.Ease.getPowInOut( 5 ) )
@@ -353,8 +338,9 @@ function startTheScreen() {
     createjs.Tween.get(startScreen)
         .to( { opacity: 0 }, 800 )
         .call( () => { 
-            startScreen.parentNode.removeChild ( startScreen ); 
+            // startScreen.parentNode.removeChild ( startScreen ); 
+            startScreen.style.visibility = "hidden";
         } );
 
-    console.clear();
+    // console.clear();
 }
