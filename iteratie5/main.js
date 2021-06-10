@@ -7,10 +7,10 @@ import {
 } from '../modules/GLTFLoader.js';
 
 let scene, camera, controls, loader, gltfScene, cameraStartPosition, sound, clickPermission = true;
-const blue = new THREE.Color( 0x00a9e0 ), floorGray = new THREE.Color( 0x999999 );
+const blue = new THREE.Color( 0x00a9e0 ), floorGray = new THREE.Color( 0xb0b0b0 );
 
 function main() {
-    let canvas = document.querySelector(".canvas");
+    let canvas = document.querySelector('.canvas');
     const renderer = new THREE.WebGLRenderer({ canvas : canvas, antialias : true });
     renderer.shadowMap.enabled = true;
     renderer.shadowMap.type = THREE.PCFSoftShadowMap;
@@ -19,8 +19,8 @@ function main() {
 
     // ThreeJS scene waaraan je de onderdelen toevoegt.
     scene = new THREE.Scene();
-    scene.background = new THREE.Color( 0xe6e6e6 );
-    scene.fog = new THREE.Fog( 0xe6e6e6, 13, 15 );
+    scene.background = new THREE.Color( 0xf2f2f2 );
+    scene.fog = new THREE.Fog( 0xf2f2f2, 13, 15 );
 
     // Camera instellingen.
     camera = new THREE.PerspectiveCamera( 70, window.innerWidth / window.innerHeight, 0.1, 1000 );
@@ -97,13 +97,28 @@ function main() {
     function checkAllLoaded () {
         if (audioBufferLoaded && restLoaded ) {
             console.log('all items loaded');
-            const loadingScreen = document.querySelector( '.loadingScreen' );
-            loadingScreen.style.opacity = 1;
+
+            controls.enabled = false; 
+            createjs.Tween.get( camera.position )
+                .to( cameraStartPosition, 3000, createjs.Ease.getPowInOut( 5 ) )
+                .call( () => { 
+                    controls.enabled = true;
+                } );
+            createjs.Tween.get( controls.target )
+                .to( { x: 0, y: 0, z: 0 }, 3000, createjs.Ease.getPowInOut( 5 ) )
+                .addEventListener("change", () => {
+                    controls.update();
+                });
+            createjs.Tween.get( gltfScene.rotation )
+                .to( { y: Math.PI * 1 }, 3000, createjs.Ease.getPowInOut( 5 ) );
+
+            const startScreen = document.querySelector( '.startScreen' );
+            startScreen.style.opacity = 1;
             createjs.CSSPlugin.install();
-            createjs.Tween.get(loadingScreen)
+            createjs.Tween.get( startScreen )
                 .to( { opacity: 0 }, 800 )
                 .call( () => { 
-                    loadingScreen.parentNode.removeChild ( loadingScreen ); 
+                    startScreen.parentNode.removeChild ( startScreen ); 
                 } );
             
         } else {
@@ -127,18 +142,23 @@ function main() {
 
     // Het inladen van het .glb bestand met de conductive wall.
     loader = new GLTFLoader( loadingManager);
-    loader.load( '../assets/VanMoof_wheel.glb', function( gltf ){
-        gltf.scene.scale.set( 10, 10, 10 );
-        // gltf.scene.position.set( 0, -2.5, 0 );
-        gltf.scene.position.set( 0, 0, 0 );
-        gltfScene = gltf.scene;
-        gltf.scene.traverse( function ( object ) {
-            if ( object.isMesh ) {
-                object.castShadow = true;
-            }
-        } );
-        scene.add( gltf.scene );
-    });
+    loader.load( 
+        '../assets/Swapfiet_wheel.glb',
+        // '../assets/VanMoof_wheel.glb',
+        function( gltf ){
+            gltf.scene.scale.set( 5, 5, 5 );
+            // gltf.scene.scale.set( 10, 10, 10 );
+            // gltf.scene.position.set( 0, -2.5, 0 );
+            gltf.scene.position.set( 0, 0, 0 );
+            gltfScene = gltf.scene;
+            gltf.scene.traverse( function ( object ) {
+                if ( object.isMesh ) {
+                    object.castShadow = true;
+                }
+            } );
+            scene.add( gltf.scene );
+        }
+    );
 
     // Audio instellingen voor het afspelen van geluidsbestanden. 
     const listener = new THREE.AudioListener();
@@ -146,12 +166,12 @@ function main() {
     sound = new THREE.Audio( listener );
     const audioLoader = new THREE.AudioLoader();
     audioLoader.load(
-        // '../assets/backgroundMusic.ogg', 
-        '../assets/phone.mp3', 
+        '../assets/backgroundMusic.ogg', 
+        // '../assets/phone.mp3', 
         function( buffer ) {
             sound.setBuffer( buffer );
             sound.setVolume( 0.1 );
-            // sound.setLoop( true );
+            sound.setLoop( true );
             if (buffer) {
                 console.log(buffer);
                 audioBufferLoaded = true;
@@ -282,7 +302,10 @@ function main() {
     window.addEventListener('pointerout', clearPickPosition);
     window.addEventListener('pointerleave', clearPickPosition);
 
-    window.addEventListener('touchstart', (event) => {
+    // document.querySelector(".canvas").addEventListener('touchstart', () => {
+
+    // }, { once: true } );
+    document.querySelector(".canvas").addEventListener('touchstart', (event) => {
         // prevent the window from scrolling
         event.preventDefault();
         setPickPosition(event.touches[0]);
@@ -291,10 +314,10 @@ function main() {
     }, {
         passive: false
     });
-    window.addEventListener('touchmove', (event) => {
+    document.querySelector(".canvas").addEventListener('touchmove', (event) => {
         setPickPosition(event.touches[0]);
     });
-    window.addEventListener('touchend', clearPickPosition);
+    document.querySelector(".canvas").addEventListener('touchend', clearPickPosition);
 
     document.querySelector(".websiteLink").addEventListener('touchstart', (event) => {
         window.location.href = "https://swapfiets.nl/";
@@ -305,53 +328,10 @@ function main() {
     if ( screen.availHeight > screen.availWidth ) {
         document.querySelector(".websiteLink").style.width = '12em';
         document.querySelector(".startText").style.fontSize = '5.5em';
-        document.querySelector(".startText").style.marginRight = '2.5em';
+        document.querySelector(".startText").style.marginBottom = '2em';
+        document.querySelector(".startScreenElements").style.paddingBottom = '8em';
         cameraStartPosition = { x: 0, y: 0, z: 6.5 }; 
     }
 }
 
 main();
-
-
-let bgMusic = document.querySelector(".bgMusic");
-bgMusic.volume = 0.1;
-bgMusic.muted = false;
-
-let startScreen = document.querySelector( ".startScreen" );
-startScreen.addEventListener( 'pointerdown', startTheScreen );
-// startScreen.addEventListener( 'touchstart', startTheScreen );
-
-function startTheScreen() {
-    
-    bgMusic.play();
-    
-    startScreen.style.opacity = 1;
-    controls.enabled = false; 
-    createjs.Tween.get( camera.position )
-        .to( cameraStartPosition, 3000, createjs.Ease.getPowInOut( 5 ) )
-        .call( () => { 
-            controls.enabled = true;
-        } );
-    createjs.Tween.get( controls.target )
-        .to( { x: 0, y: 0, z: 0 }, 3000, createjs.Ease.getPowInOut( 5 ) )
-        .addEventListener("change", () => {
-            controls.update();
-        });
-    createjs.Tween.get( gltfScene.rotation )
-        .to( { y: Math.PI * 2 }, 3000, createjs.Ease.getPowInOut( 5 ) )
-
-    // Fade het startscherm weg om deze vervolgens te verwijderen. 
-    createjs.Tween.get(startScreen)
-        .to( { opacity: 0 }, 800 )
-        .call( () => { 
-            // startScreen.parentNode.removeChild ( startScreen ); 
-            startScreen.style.visibility = "hidden";
-        } );
-
-    // console.clear();
-}
-
-// Extra achtergrondmuziek starter omdat het bij mobile pas lukt op een interactie na het startscherm. 
-document.querySelector(".canvas").addEventListener( 'touchstart', () => {
-    bgMusic.play();
-}, { once: true } );

@@ -17,22 +17,14 @@
     </a>
   </div>
 
-  <audio class="bgMusic" loop muted>
-    <source src="../assets/backgroundMusic.ogg" type="audio/ogg">
-  </audio>
-
   <div class="startScreen"> <!-- Het startscherm dat nodig is omdat een gebruiker eerst een interactie moet uitvoeren voordat audio mag spelen. -->
-    <div class="startBackground"></div>
-    <div class="startText">The <blue>Blue</blue> Tire</div>
+    <div class="startScreenElements">
+      <div class="startText">The <blue>Blue</blue> Tire</div>
+      <div class="spinner spinner-1"></div>
+    </div>
   </div>
-
-  <div class="loadingScreen">
-    <div class="spinner spinner-1"></div>
-  </div>
-
 
   <canvas class="canvas"></canvas>
-
 
   <script src="../modules/tweenjs.min.js"></script> <!-- Animatie / tweening library van CreateJS gebruikt voor de camera perspectief animaties. -->
   <script src="../modules/CSSPlugin.js"></script> <!-- CSS plugin van CreateJS gebruikt om het startscherm smooth uit te faden. -->
