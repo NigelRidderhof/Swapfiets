@@ -6,7 +6,7 @@ import {
     GLTFLoader
 } from '../modules/GLTFLoader.js';
 
-let scene, camera, controls, loader, gltfScene, cameraStartPosition, video, videoObject, sound, clickPermission = true;
+let scene, camera, controls, loader, gltfScene, cameraStartPosition, cameraSwapPosition, video, videoObject, sound, clickPermission = true, backButtonSwap;
 const blue = new THREE.Color( 0x00a9e0 ), floorGray = new THREE.Color( 0xb0b0b0 );
 
 function main() {
@@ -72,6 +72,15 @@ function main() {
     videoObject.name = "videoObject";
     videoObject.scale.set( 0.6 , 0.6, 1 );
     // scene.add( videoObject );
+    cameraSwapPosition = { x: -1.8, y: 0, z: 1 };
+
+    const plane4 = new THREE.PlaneBufferGeometry( 0.326, 0.274 );
+    const backTexture = new THREE.TextureLoader().load( '../assets/back_icon.png' );
+    backButtonSwap = new THREE.Mesh( plane4, new THREE.MeshBasicMaterial( { map: backTexture, transparent: true } ) );
+    backButtonSwap.position.set( -2.33, -0.42, 0.17 );
+    backButtonSwap.scale.set( 0.25, 0.25, 1 );
+    backButtonSwap.name = "backButtonSwap";
+    // scene.add( backButtonSwap );
 
     // Belichting.
     const light = new THREE.SpotLight( 0xffffff, 5, 10 );
@@ -219,7 +228,7 @@ function main() {
 
 
         pick(normalizedPosition, scene, camera) {
-            if ( clickPermission ) {    // De if-statement die voorkomt dat je tijdens de animatie en afspelende audio deze opnieuw kunt starten.
+            // if ( clickPermission ) {    // De if-statement die voorkomt dat je tijdens de animatie en afspelende audio deze opnieuw kunt starten.
 
                 // cast a ray through the frustum
                 this.raycaster.setFromCamera(normalizedPosition, camera);
@@ -231,25 +240,37 @@ function main() {
 
                     switch ( intersectedObjects[ 0 ].object.name ) {
                         case "buttonSwap":
-                            swapAnimation( button );
+                            if ( clickPermission) {
+                                swapAnimation( button, backButtonSwap );
+                            }
                             break;
                         case "buttonVittoria":
-                            vittoriaAnimation( button );
+                            if ( clickPermission) {
+                                vittoriaAnimation( button );
+                            }
                             break;
                         case "videoObject":
-                                console.log("hier ook 2x?");
+                            if ( clickPermission) {
                                 videoControl();
+                            }
                                 break;
                         case "startBG":
+                            if ( clickPermission) {
                                 startTheScreen();
+                            }
                             break;
                         case "startTitle":
+                            if ( clickPermission) {
                                 startTheScreen();
+                            }
+                            break;
+                        case "backButtonSwap":
+                            goBack();
                     }
                 }
-            } else {
-                clickPermission = true;
-            }
+            // } else {
+            //     clickPermission = true;
+            // }
         }
     }
 
@@ -336,6 +357,7 @@ function main() {
         document.querySelector(".startText").style.marginBottom = '2em';
         document.querySelector(".startScreenElements").style.paddingBottom = '8em';
         cameraStartPosition = { x: 0, y: 0, z: 6.5 }; 
+        cameraSwapPosition = { x: -1.8, y: 0, z: 2 };
     }
 }
 
@@ -373,17 +395,12 @@ function swapAnimation( button ) {
     button.material.color = floorGray;
 
     createjs.Tween.get( camera.position )
-        .to( { x: -1.8, y: 0, z: 1 }, 3000, createjs.Ease.getPowInOut( 5 ) )
-        .wait( 1700 )
-        .to( cameraStartPosition, 3000, createjs.Ease.getPowInOut( 5 ) )
+        .to( cameraSwapPosition, 3000, createjs.Ease.getPowInOut( 5 ) )
         .call( () => { 
-            controls.enabled = true; 
             button.material.color =  blue;
         } );
     createjs.Tween.get( controls.target )
         .to( { x: -1.8, y: 0, z: 0 }, 3000, createjs.Ease.getPowInOut( 5 ) )
-        .wait( 1700 )
-        .to( { x: 0, y: 0, z: 0 }, 3000, createjs.Ease.getPowInOut( 5 ) )
         .addEventListener("change", () => {
             controls.update();
         });
@@ -395,10 +412,13 @@ function swapAnimation( button ) {
     }, 250 ); 
     
     setTimeout( () => { 
-        scene.add( videoObject );
+        scene.add( videoObject, backButtonSwap );
         video.play(); 
         clickPermission = true;
-    }, 3000 );
+    }, 3300 );
+
+    // video.currentTime = 0;
+
 }
 
 function videoControl() {
@@ -441,4 +461,25 @@ function vittoriaAnimation( button ) {
         .to( { z: Math.PI * -2 }, 3000, createjs.Ease.getPowInOut( 5 ) )
         .wait( 1700 )
         .to( { z: 0 }, 3000, createjs.Ease.getPowInOut( 5 ) );
+}
+
+function goBack() {
+    console.log("Go back");
+
+    scene.remove( videoObject, backButtonSwap );
+    video.currentTime = 0;
+    video.pause();
+
+    createjs.Tween.get( camera.position )
+        .to( cameraStartPosition, 3000, createjs.Ease.getPowInOut( 5 ) )
+        .call( () => { 
+            controls.enabled = true; 
+            clickPermission = true;
+            // button.material.color =  blue;
+        } );
+    createjs.Tween.get( controls.target )
+        .to( { x: 0, y: 0, z: 0 }, 3000, createjs.Ease.getPowInOut( 5 ) )
+        .addEventListener("change", () => {
+            controls.update();
+        });
 }
