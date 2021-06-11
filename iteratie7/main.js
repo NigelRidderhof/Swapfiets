@@ -19,8 +19,8 @@ function main() {
 
     // ThreeJS scene waaraan je de onderdelen toevoegt.
     scene = new THREE.Scene();
-    scene.background = new THREE.Color( 0xf2f2f2 );
-    scene.fog = new THREE.Fog( 0xf2f2f2, 13, 15 );
+    scene.background = new THREE.Color( 0xffffff );
+    scene.fog = new THREE.Fog( 0xffffff, 13, 15 );
 
     // Camera instellingen.
     camera = new THREE.PerspectiveCamera( 70, window.innerWidth / window.innerHeight, 0.1, 1000 );
@@ -68,7 +68,8 @@ function main() {
     const videoTexture = new THREE.VideoTexture( video );
     let planeVideo = new THREE.PlaneGeometry( 2, 1.125 );
     videoObject = new THREE.Mesh( planeVideo, new THREE.MeshBasicMaterial( { map: videoTexture } ) );
-    videoObject.position.set( -1.8, 0, 0.2 );
+    videoObject.position.set( -1.83, 0, 0.25 );
+    videoObject.rotation.y = Math.PI * -0.052;
     videoObject.name = "videoObject";
     videoObject.scale.set( 0.6 , 0.6, 1 );
     // scene.add( videoObject );
@@ -83,32 +84,20 @@ function main() {
     // scene.add( backButtonSwap );
 
     // Belichting.
-    const light = new THREE.SpotLight( 0xffffff, 5, 10 );
-    light.position.set( 0, 3.9, 4.7 );
+    const light = new THREE.SpotLight( 0xffffff, 0.9, 10 );
+    light.position.set( 0, 3.9, 1.5 );
     light.angle = Math.PI / 1.15;
     light.penumbra = 1;
     // const spotLightHelper = new THREE.SpotLightHelper(light, 1);
     scene.add( light );
-    const light2 = new THREE.SpotLight( 0xffffff, 3.8, 10 );
-    light2.position.set( 0, -0.6, -4.8 );
-    light2.angle = Math.PI / 1.15;
-    light2.penumbra = 1;
-    scene.add( light2 );
-
     const guiLight1 = gui.addFolder('Light 1');
     guiLight1.add(light.position, 'y').min(-100).max(100).step(0.1);
     guiLight1.add(light.position, 'x').min(-100).max(100).step(0.1);
     guiLight1.add(light.position, 'z').min(-100).max(100).step(0.1);
     guiLight1.add(light, 'intensity').min(0).max(10).step(0.1);
     guiLight1.add(light, 'penumbra').min(0).max(1).step(0.1);
-    const guiLight2 = gui.addFolder('Light 2');
-    guiLight2.add(light2.position, 'y').min(-100).max(100).step(0.1);
-    guiLight2.add(light2.position, 'x').min(-100).max(100).step(0.1);
-    guiLight2.add(light2.position, 'z').min(-100).max(100).step(0.1);
-    guiLight2.add(light2, 'intensity').min(0).max(10).step(0.1);
-    guiLight2.add(light2, 'penumbra').min(0).max(1).step(0.1);
 
-    const dirLight = new THREE.DirectionalLight( 0xffffff, 1.5 );
+    const dirLight = new THREE.DirectionalLight( 0xffffff, 1.4 );
     dirLight.position.set( 0, 1.5, 1 );
     dirLight.castShadow = true;
     dirLight.shadow.mapSize.width = 1024;
@@ -122,11 +111,14 @@ function main() {
     dirLight.shadow.camera.far = 20;
     scene.add( dirLight );
 
+    const ambientLlight = new THREE.AmbientLight( floorGray, 3.2 );
+    scene.add(ambientLlight);
+
     // De vloer.
     const groundMesh = new THREE.Mesh(
         new THREE.PlaneBufferGeometry( 45, 45 ),
         new THREE.MeshPhongMaterial( {
-            color: floorGray,
+            color: 0x4a4a4a,
             depthWrite: false
         } )
     );
@@ -196,11 +188,11 @@ function main() {
     sound = new THREE.Audio( listener );
     const audioLoader = new THREE.AudioLoader();
     audioLoader.load(
-        '../assets/backgroundMusic.ogg', 
-        // '../assets/phone.mp3', 
+        // '../assets/backgroundMusic.ogg', 
+        '../assets/voice_over.mp3', 
         function( buffer ) {
             sound.setBuffer( buffer );
-            sound.setVolume( 0.1 );
+            sound.setVolume( 0.4 );
             sound.setLoop( true );
             if (buffer) {
                 console.log(buffer);
@@ -365,6 +357,10 @@ main();
 
 
 function startTheScreen() {
+
+    sound.play(); 
+    
+
     controls.enabled = false; 
     clickPermission = false;
 
@@ -395,12 +391,12 @@ function swapAnimation( button ) {
     button.material.color = floorGray;
 
     createjs.Tween.get( camera.position )
-        .to( cameraSwapPosition, 3000, createjs.Ease.getPowInOut( 5 ) )
+        .to( cameraSwapPosition, 3300, createjs.Ease.getPowInOut( 5 ) )
         .call( () => { 
             button.material.color =  blue;
         } );
     createjs.Tween.get( controls.target )
-        .to( { x: -1.8, y: 0, z: 0 }, 3000, createjs.Ease.getPowInOut( 5 ) )
+        .to( { x: -1.8, y: 0, z: 0 }, 3300, createjs.Ease.getPowInOut( 5 ) )
         .addEventListener("change", () => {
             controls.update();
         });
@@ -413,6 +409,7 @@ function swapAnimation( button ) {
     
     setTimeout( () => { 
         scene.add( videoObject, backButtonSwap );
+        sound.setVolume( 0.05 );
         video.play(); 
         clickPermission = true;
     }, 3300 );
@@ -439,7 +436,7 @@ function vittoriaAnimation( button ) {
     clickPermission = false;
     button.material.color = floorGray;
 
-    sound.play(); 
+    // sound.play(); 
 
     createjs.Tween.get( camera.position )
         .to( { x: -.45, y: 0.5, z: 0.26 }, 3000, createjs.Ease.getPowInOut( 5 ) )
@@ -464,6 +461,9 @@ function vittoriaAnimation( button ) {
 }
 
 function goBack() {
+
+    sound.setVolume( 0.4 );
+
     console.log("Go back");
 
     scene.remove( videoObject, backButtonSwap );

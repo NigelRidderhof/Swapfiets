@@ -28,6 +28,23 @@ html, body {
     fill: black;
 }
 
+.social {
+    position:absolute;
+    bottom: 0.5em;
+    right: 1em;
+    z-index: 1; 
+    font-size: 1.5em;
+}
+.fa {
+    text-decoration: none;
+    border-radius: 50%;
+    padding-left: 0.1em;
+    color: var(--blue);
+}
+.fa:hover {
+    color: black;
+}
+
 /* Het startscherm. */
 .startScreen {
     position: fixed;
