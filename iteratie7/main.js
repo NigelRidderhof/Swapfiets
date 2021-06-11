@@ -6,7 +6,7 @@ import {
     GLTFLoader
 } from '../modules/GLTFLoader.js';
 
-let scene, camera, controls, loader, gltfScene, cameraStartPosition, sound, clickPermission = true;
+let scene, camera, controls, loader, gltfScene, cameraStartPosition, video, videoObject, sound, clickPermission = true;
 const blue = new THREE.Color( 0x00a9e0 ), floorGray = new THREE.Color( 0xb0b0b0 );
 
 function main() {
@@ -53,40 +53,25 @@ function main() {
     startTitle.name = "startTitle";
     scene.add( startBG, startTitle );
 
-    // const plane = new THREE.PlaneBufferGeometry( 7, 5 );
-    // const revealWall = new THREE.Mesh( plane, new THREE.MeshBasicMaterial( { color: 0x000 } ) );
-    // revealWall.position.set( -1, 0, 1.7 );
-    // revealWall.name = "revealWall";
-    // const plane2 = new THREE.PlaneBufferGeometry( 6.7, 4.7 );
-    // const revealWall2 = new THREE.Mesh( plane2, new THREE.MeshBasicMaterial( { color: blue } ) );
-    // revealWall2.position.set( -1, 0, 1.72 );
-    // revealWall2.name = "revealWall2";
-    // const plane3 = new THREE.PlaneBufferGeometry( 2, 0.38 );
-    // const revealButtonTexture = new THREE.TextureLoader().load( '../assets/revealButton.png' );
-    // const revealButton = new THREE.Mesh( plane3, new THREE.MeshBasicMaterial( { map: revealButtonTexture, transparent: true } ) );
-    // revealButton.position.set( -3.6, -1.66, 8 );
-    // revealButton.rotation.y = Math.PI * 0.09;
-    // revealButton.name = "revealButton";
-    // const triangle = new THREE.CircleBufferGeometry( 0.15, 3 );
-    // const triangleRevealButton = new THREE.Mesh( triangle, new THREE.MeshBasicMaterial( { color: blue } ) );
-    // triangleRevealButton.position.set( -3.6, -1.35, 8 );
-    // triangleRevealButton.rotation.y = Math.PI * 0.09;
-    // triangleRevealButton.rotation.z = Math.PI * 0.5;
-    // triangleRevealButton.scale.y = 1.5;
-    // triangleRevealButton.name = "triangleRevealButton";
-    // scene.add( revealWall, revealWall2, revealButton, triangleRevealButton );
-
-
     // Cirkels die gaan functioneren als knoppen. 
     const circle1 = new THREE.CircleBufferGeometry( 0.15, 32 );
     const button1 = new THREE.Mesh( circle1, new THREE.MeshBasicMaterial( { color: blue, transparent: true, opacity: 0.9, side: THREE.DoubleSide } ) );
-    button1.position.set(-0.27, 1.4, 0.17);
-    button1.name = "buttonPhone";
-    const circle2 = new THREE.CircleBufferGeometry( 0.11, 32 );
+    button1.position.set(-1.44, 0, 0.17);
+    button1.name = "buttonSwap";
+    const circle2 = new THREE.CircleBufferGeometry( 0.15, 32 );
     const button2 = new THREE.Mesh( circle2, new THREE.MeshBasicMaterial( { color: blue, transparent: true, opacity: 0.9, side: THREE.DoubleSide } ) );
-    button2.position.set(30, 0, 0.17);
-    button2.name = "buttonPlanes";
+    button2.position.set(-0.27, 1.4, 0.17);
+    button2.name = "buttonVittoria";
     scene.add( button1, button2 );
+
+    video = document.querySelector( ".video" );
+    const videoTexture = new THREE.VideoTexture( video );
+    let planeVideo = new THREE.PlaneGeometry( 2, 1.125 );
+    videoObject = new THREE.Mesh( planeVideo, new THREE.MeshBasicMaterial( { map: videoTexture } ) );
+    videoObject.position.set( -1.8, 0, 0.2 );
+    videoObject.name = "videoObject";
+    videoObject.scale.set( 0.6 , 0.6, 1 );
+    // scene.add( videoObject );
 
     // Belichting.
     const light = new THREE.SpotLight( 0xffffff, 5, 10 );
@@ -245,43 +230,21 @@ function main() {
                     let button = intersectedObjects[0].object;
 
                     switch ( intersectedObjects[ 0 ].object.name ) {
-                        case "buttonPhone":
-                            controls.enabled = false;
-                            clickPermission = false;
-                            button.material.color = floorGray;
-                            console.log("Pressed");
-
-                            sound.play(); 
-        
-                            createjs.Tween.get( camera.position )
-                                .to( { x: -.45, y: 0.5, z: 0.26 }, 3000, createjs.Ease.getPowInOut( 5 ) )
-                                .wait( 1700 )
-                                .to( cameraStartPosition, 3000, createjs.Ease.getPowInOut( 5 ) )
-                                .call( () => { 
-                                    controls.enabled = true; 
-                                    clickPermission = true;
-                                    button.material.color =  blue;
-                                } );
-                            createjs.Tween.get( controls.target )
-                                .to( { x: 0.8, y: 1.8, z: -2 }, 3000, createjs.Ease.getPowInOut( 5 ) )
-                                .wait( 1700 )
-                                .to( { x: 0, y: 0, z: 0 }, 3000, createjs.Ease.getPowInOut( 5 ) )
-                                .addEventListener("change", () => {
-                                    controls.update();
-                                });
-                            createjs.Tween.get( gltfScene.rotation )
-                                .to( { z: Math.PI * -2 }, 3000, createjs.Ease.getPowInOut( 5 ) )
-                                .wait( 1700 )
-                                .to( { z: 0 }, 3000, createjs.Ease.getPowInOut( 5 ) );
+                        case "buttonSwap":
+                            swapAnimation( button );
                             break;
+                        case "buttonVittoria":
+                            vittoriaAnimation( button );
+                            break;
+                        case "videoObject":
+                                console.log("hier ook 2x?");
+                                videoControl();
+                                break;
                         case "startBG":
                                 startTheScreen();
                             break;
                         case "startTitle":
                                 startTheScreen();
-                            break;
-                        case "buttonPlanes":
-                            console.log("Planes Button");
                     }
                 }
             } else {
@@ -382,7 +345,7 @@ main();
 function startTheScreen() {
     controls.enabled = false; 
     clickPermission = false;
-    
+
     createjs.Tween.get( scene.getObjectByName( "startBG" ).material )
         .to( { opacity: 0 }, 2000, createjs.Ease.getPowInOut( 5 ) );
     createjs.Tween.get( scene.getObjectByName( "startBG" ).position )
@@ -402,5 +365,80 @@ function startTheScreen() {
         });
     createjs.Tween.get( gltfScene.rotation )
         .to( { y: Math.PI * 1 }, 3000, createjs.Ease.getPowInOut( 5 ) );
+}
 
+function swapAnimation( button ) {
+    controls.enabled = false;
+    clickPermission = false;
+    button.material.color = floorGray;
+
+    createjs.Tween.get( camera.position )
+        .to( { x: -1.8, y: 0, z: 1 }, 3000, createjs.Ease.getPowInOut( 5 ) )
+        .wait( 1700 )
+        .to( cameraStartPosition, 3000, createjs.Ease.getPowInOut( 5 ) )
+        .call( () => { 
+            controls.enabled = true; 
+            button.material.color =  blue;
+        } );
+    createjs.Tween.get( controls.target )
+        .to( { x: -1.8, y: 0, z: 0 }, 3000, createjs.Ease.getPowInOut( 5 ) )
+        .wait( 1700 )
+        .to( { x: 0, y: 0, z: 0 }, 3000, createjs.Ease.getPowInOut( 5 ) )
+        .addEventListener("change", () => {
+            controls.update();
+        });
+
+    // Video alvast een keer gestart hebben was nodig voor iOS.
+    video.play();
+    setTimeout( () => { 
+        video.pause(); 
+    }, 250 ); 
+    
+    setTimeout( () => { 
+        scene.add( videoObject );
+        video.play(); 
+        clickPermission = true;
+    }, 3000 );
+}
+
+function videoControl() {
+    clickPermission = false;
+    console.log("ewa");
+    if ( video.paused ) {
+        video.play();
+    } else {
+        video.pause();
+    }
+    setTimeout( () => { 
+        clickPermission = true;
+    }, 500 );
+}
+
+function vittoriaAnimation( button ) {
+    controls.enabled = false;
+    clickPermission = false;
+    button.material.color = floorGray;
+
+    sound.play(); 
+
+    createjs.Tween.get( camera.position )
+        .to( { x: -.45, y: 0.5, z: 0.26 }, 3000, createjs.Ease.getPowInOut( 5 ) )
+        .wait( 1700 )
+        .to( cameraStartPosition, 3000, createjs.Ease.getPowInOut( 5 ) )
+        .call( () => { 
+            controls.enabled = true; 
+            clickPermission = true;
+            button.material.color =  blue;
+        } );
+    createjs.Tween.get( controls.target )
+        .to( { x: 0.8, y: 1.8, z: -2 }, 3000, createjs.Ease.getPowInOut( 5 ) )
+        .wait( 1700 )
+        .to( { x: 0, y: 0, z: 0 }, 3000, createjs.Ease.getPowInOut( 5 ) )
+        .addEventListener("change", () => {
+            controls.update();
+        });
+    createjs.Tween.get( gltfScene.rotation )
+        .to( { z: Math.PI * -2 }, 3000, createjs.Ease.getPowInOut( 5 ) )
+        .wait( 1700 )
+        .to( { z: 0 }, 3000, createjs.Ease.getPowInOut( 5 ) );
 }

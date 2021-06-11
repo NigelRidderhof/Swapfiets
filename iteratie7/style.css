@@ -132,6 +132,10 @@ blue {
             animation: anti-rotate-animation 0.85s linear 0s infinite;
 }
 
+.video {
+    display: none;
+}
+
 /* ThreeJS canvas. */
 .canvas {
     cursor: pointer;
