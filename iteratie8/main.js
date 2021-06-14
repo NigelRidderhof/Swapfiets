@@ -15,7 +15,7 @@ function main() {
     renderer.shadowMap.enabled = true;
     renderer.shadowMap.type = THREE.PCFSoftShadowMap;
 
-    const gui = new dat.GUI();
+    // const gui = new dat.GUI();
 
     // ThreeJS scene waaraan je de onderdelen toevoegt.
     scene = new THREE.Scene();
@@ -38,20 +38,6 @@ function main() {
     controls.maxDistance = 12;                      // Maximale uitzoom.
     controls.rotateSpeed = 0.7;                     // Maximale snelheid waarop je de scene kunt draaien. 
     // controls.enabled = false; 
-
-    const plane = new THREE.PlaneBufferGeometry( 8, 6 );
-    const startBG = new THREE.Mesh( plane, new THREE.MeshBasicMaterial( { color: 0xffffff, transparent: true, opacity: 0.7, side: THREE.DoubleSide } ) );
-    startBG.position.set( -3.5, 0.7, 9 );
-    startBG.rotation.y = Math.PI * 0.09;
-    startBG.name = "startBG";
-    const plane2 = new THREE.PlaneBufferGeometry( 2, 0.38 );
-    const startTitleTexture = new THREE.TextureLoader().load( '../assets/revealButton.png' );
-    const startTitle = new THREE.Mesh( plane2, new THREE.MeshBasicMaterial( { map: startTitleTexture, transparent: true } ) );
-    startTitle.position.set( -3.3, 0.3, 9.1 );
-    startTitle.rotation.y = Math.PI * 0.09;
-    startTitle.scale.set( 0.7, 0.7, 0.7 );
-    startTitle.name = "startTitle";
-    scene.add( startBG, startTitle );
 
     // Cirkels die gaan functioneren als knoppen. 
     const circle1 = new THREE.CircleBufferGeometry( 0.15, 32 );
@@ -101,16 +87,15 @@ function main() {
     // scene.add( vittoriaObject );
     cameraVittoriaPosition = { x: -.45, y: 0.5, z: 0.26 };
 
-
-    const plane4 = new THREE.PlaneBufferGeometry( 0.326, 0.274 );
+    const planeBackSwap = new THREE.PlaneBufferGeometry( 0.326, 0.274 );
     const backTexture = new THREE.TextureLoader().load( '../assets/back_icon.png' );
-    backButtonSwap = new THREE.Mesh( plane4, new THREE.MeshBasicMaterial( { map: backTexture, transparent: true } ) );
+    backButtonSwap = new THREE.Mesh( planeBackSwap, new THREE.MeshBasicMaterial( { map: backTexture, transparent: true } ) );
     backButtonSwap.position.set( -2.33, -0.42, 0.17 );
     backButtonSwap.scale.set( 0.25, 0.25, 1 );
     backButtonSwap.name = "backButtonSwap";
     // scene.add( backButtonSwap );
-    const plane5 = new THREE.PlaneBufferGeometry( 0.326, 0.274 );
-    backButtonRecord = new THREE.Mesh( plane5, new THREE.MeshBasicMaterial( { map: backTexture, transparent: true } ) );
+    const planeBackRecord = new THREE.PlaneBufferGeometry( 0.326, 0.274 );
+    backButtonRecord = new THREE.Mesh( planeBackRecord, new THREE.MeshBasicMaterial( { map: backTexture, transparent: true } ) );
     backButtonRecord.position.set( 2.28, -0.42, 0.17 );
     backButtonRecord.scale.set( 0.25, 0.25, 1 );
     backButtonRecord.name = "backButtonRecord";
@@ -123,12 +108,12 @@ function main() {
     light.penumbra = 1;
     // const spotLightHelper = new THREE.SpotLightHelper(light, 1);
     scene.add( light );
-    const guiLight1 = gui.addFolder('Light 1');
-    guiLight1.add(light.position, 'y').min(-100).max(100).step(0.1);
-    guiLight1.add(light.position, 'x').min(-100).max(100).step(0.1);
-    guiLight1.add(light.position, 'z').min(-100).max(100).step(0.1);
-    guiLight1.add(light, 'intensity').min(0).max(10).step(0.1);
-    guiLight1.add(light, 'penumbra').min(0).max(1).step(0.1);
+    // const guiLight1 = gui.addFolder('Light 1');
+    // guiLight1.add(light.position, 'y').min(-100).max(100).step(0.1);
+    // guiLight1.add(light.position, 'x').min(-100).max(100).step(0.1);
+    // guiLight1.add(light.position, 'z').min(-100).max(100).step(0.1);
+    // guiLight1.add(light, 'intensity').min(0).max(10).step(0.1);
+    // guiLight1.add(light, 'penumbra').min(0).max(1).step(0.1);
 
     const dirLight = new THREE.DirectionalLight( 0xffffff, 1.4 );
     dirLight.position.set( 0, 1.5, 1 );
@@ -167,15 +152,14 @@ function main() {
         if (audioBufferLoaded && restLoaded ) {
             console.log('all items loaded');
 
-            const startScreen = document.querySelector( '.startScreen' );
-            startScreen.style.opacity = 1;
+            const loadingScreen = document.querySelector( '.loadingScreen' );
+            loadingScreen.style.opacity = 1;
             createjs.CSSPlugin.install();
-            createjs.Tween.get( startScreen )
+            createjs.Tween.get( loadingScreen )
                 .to( { opacity: 0 }, 800 )
                 .call( () => { 
-                    startScreen.parentNode.removeChild ( startScreen ); 
+                    loadingScreen.parentNode.removeChild ( loadingScreen ); 
                 } );
-            
         } else {
             console.log("Something hasn't loaded yet.");
         }
@@ -253,62 +237,47 @@ function main() {
 
 
         pick(normalizedPosition, scene, camera) {
-            // if ( clickPermission ) {    // De if-statement die voorkomt dat je tijdens de animatie en afspelende audio deze opnieuw kunt starten.
+            // cast a ray through the frustum
+            this.raycaster.setFromCamera(normalizedPosition, camera);
+            // get the list of objects the ray intersected
+            const intersectedObjects = this.raycaster.intersectObjects(scene.children);
+            if (intersectedObjects.length) {
+                // pick the first object. It's the closest one
+                let button = intersectedObjects[0].object;
 
-                // cast a ray through the frustum
-                this.raycaster.setFromCamera(normalizedPosition, camera);
-                // get the list of objects the ray intersected
-                const intersectedObjects = this.raycaster.intersectObjects(scene.children);
-                if (intersectedObjects.length) {
-                    // pick the first object. It's the closest one
-                    let button = intersectedObjects[0].object;
-
-                    switch ( intersectedObjects[ 0 ].object.name ) {
-                        case "buttonSwap":
-                            if ( clickPermission) {
-                                swapAnimation( button );
-                            }
+                switch ( intersectedObjects[ 0 ].object.name ) {
+                    case "buttonSwap":
+                        if ( clickPermission) {
+                            swapAnimation( button );
+                        }
+                        break;
+                    case "buttonVittoria":
+                        if ( clickPermission) {
+                            vittoriaAnimation( button );
+                        }
+                        break;
+                    case "videoObjectSwap":
+                        if ( clickPermission) {
+                            videoControl( videoSwap );
+                        }
                             break;
-                        case "buttonVittoria":
-                            if ( clickPermission) {
-                                vittoriaAnimation( button );
-                            }
+                    case "videoObjectRecord":
+                        if ( clickPermission) {
+                            videoControl( videoRecord );
+                        }
                             break;
-                        case "videoObjectSwap":
-                            if ( clickPermission) {
-                                videoControl( videoSwap );
-                            }
-                                break;
-                        case "videoObjectRecord":
-                            if ( clickPermission) {
-                                videoControl( videoRecord );
-                            }
-                                break;
-                        case "buttonRecord":
-                            if ( clickPermission) {
-                                recordAnimation( button );
-                            }
-                                break;
-                        case "startBG":
-                            if ( clickPermission) {
-                                startTheScreen();
-                            }
+                    case "buttonRecord":
+                        if ( clickPermission) {
+                            recordAnimation( button );
+                        }
                             break;
-                        case "startTitle":
-                            if ( clickPermission) {
-                                startTheScreen();
-                            }
-                            break;
-                        case "backButtonSwap":
-                            goBack();
-                            break;
-                        case "backButtonRecord":
-                            goBack();
-                    }
+                    case "backButtonSwap":
+                        goBack();
+                        break;
+                    case "backButtonRecord":
+                        goBack();
                 }
-            // } else {
-            //     clickPermission = true;
-            // }
+            }
         }
     }
 
@@ -366,9 +335,6 @@ function main() {
     window.addEventListener('pointerout', clearPickPosition);
     window.addEventListener('pointerleave', clearPickPosition);
 
-    // document.querySelector(".canvas").addEventListener('touchstart', () => {
-
-    // }, { once: true } );
     document.querySelector(".canvas").addEventListener('touchstart', (event) => {
         // prevent the window from scrolling
         event.preventDefault();
@@ -389,10 +355,13 @@ function main() {
         passive: false
     });
 
+    // Als scherm hoger is dan breed (voor smartphones en tablets), pas andere positionering, grootten en zooms toe. 
     if ( screen.availHeight > screen.availWidth ) {
+        document.querySelector(".startSubText").style.fontSize = '3em';
         document.querySelector(".websiteLink").style.width = '12em';
+        // document.querySelector(".spinner").style.marginBottom = '8.2rem';
         document.querySelector(".startText").style.fontSize = '5.5em';
-        document.querySelector(".startText").style.marginBottom = '2em';
+        // document.querySelector(".startText").style.marginBottom = '8rem';
         document.querySelector(".startScreenElements").style.paddingBottom = '8em';
         cameraStartPosition = { x: 0, y: 0, z: 6.5 }; 
         cameraSwapPosition = { x: -1.8, y: 0, z: 2 };
@@ -404,19 +373,24 @@ function main() {
 main();
 
 
+
+let startScreen = document.querySelector( ".startScreen" );
+startScreen.addEventListener( 'pointerdown', startTheScreen );
+startScreen.addEventListener( 'touchstart', startTheScreen );
+
 function startTheScreen() {
 
     sound.play(); 
-    
 
     controls.enabled = false; 
     clickPermission = false;
-
-    createjs.Tween.get( scene.getObjectByName( "startBG" ).material )
-        .to( { opacity: 0 }, 2000, createjs.Ease.getPowInOut( 5 ) );
-    createjs.Tween.get( scene.getObjectByName( "startBG" ).position )
-        .wait( 1000 )
-        .to( { y: -6 }, 2500, createjs.Ease.getPowInOut( 5 ) );
+    startScreen.style.opacity = 1;
+    // Fade het startscherm weg om deze vervolgens te verwijderen. 
+    createjs.Tween.get(startScreen)
+        .to( { opacity: 0 }, 800 )
+        .call( () => { 
+            startScreen.parentNode.removeChild ( startScreen ); 
+        } );
     
     createjs.Tween.get( camera.position )
         .to( cameraStartPosition, 3000, createjs.Ease.getPowInOut( 5 ) )
@@ -431,6 +405,8 @@ function startTheScreen() {
         });
     createjs.Tween.get( gltfScene.rotation )
         .to( { y: Math.PI * 1 }, 3000, createjs.Ease.getPowInOut( 5 ) );
+
+    // console.clear();
 }
 
 function swapAnimation( button ) {
@@ -461,21 +437,6 @@ function swapAnimation( button ) {
         videoSwap.play(); 
         clickPermission = true;
     }, 3300 );
-
-    // video.currentTime = 0;
-
-}
-
-function videoControl( video ) {
-    clickPermission = false;
-    if ( video.paused ) {
-        video.play();
-    } else {
-        video.pause();
-    }
-    setTimeout( () => { 
-        clickPermission = true;
-    }, 500 );
 }
 
 function recordAnimation( button ) {
@@ -509,6 +470,18 @@ function recordAnimation( button ) {
 
     // video.currentTime = 0;
 
+}
+
+function videoControl( video ) {
+    clickPermission = false;
+    if ( video.paused ) {
+        video.play();
+    } else {
+        video.pause();
+    }
+    setTimeout( () => { 
+        clickPermission = true;
+    }, 500 );
 }
 
 function vittoriaAnimation( button ) {
