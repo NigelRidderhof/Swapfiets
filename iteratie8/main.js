@@ -349,20 +349,16 @@ function main() {
     });
     document.querySelector(".canvas").addEventListener('touchend', clearPickPosition);
 
-    // document.querySelector(".websiteLink").addEventListener('touchstart', (event) => {
-    //     window.location.href = "https://swapfiets.nl/";
-    // }, {
-    //     passive: false
-    // });
 
     // Als scherm hoger is dan breed (voor smartphones en tablets), pas andere positionering, grootten en zooms toe. 
     if ( screen.availHeight > screen.availWidth ) {
-        document.querySelector(".startScreenElements").style.fontSize = '1.9em';
-        document.querySelector(".startScreenElements").style.marginRight = '40%';
-        // document.querySelector(".startText").style.fontSize = '5.5em';
-        // document.querySelector(".startText").style.marginBottom = '8rem';
-        document.querySelector(".startScreenElements").style.paddingBottom = '8em';
+        let startScreenElements =  document.querySelector(".startScreenElements");
+        startScreenElements.style.fontSize = '1.9em';
+        startScreenElements.style.marginRight = '40%';
+        startScreenElements.style.paddingBottom = '8em';
+        document.querySelector(".startScreenImage").style.fontSize = '2em';
         document.querySelector(".topLeftElements").style.fontSize = '2em';
+        document.querySelector(".pressElements").style.fontSize = '2em';
         cameraStartPosition = { x: 0, y: 0, z: 6.5 }; 
         cameraSwapPosition = { x: -1.8, y: 0, z: 2 };
         cameraRecordPosition = { x: 1.8, y: 0, z: 2 };
