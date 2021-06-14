@@ -1,0 +1,162 @@
+:root {
+    --blue: #00a9e0;
+}
+
+* {
+    margin: 0;
+    padding: 0;
+}
+
+html, body {
+    height: 100%;
+}
+
+.websiteLink {
+    position: fixed;
+    width: 6em;
+    margin: 1em 2em;
+    z-index: 1;
+    /* height: 3em;
+    width: 6em;
+    margin-top: 1rem;
+    margin-left: 2rem; */
+}
+.websiteLinkLogo {
+    fill: var(--blue);
+}
+.websiteLinkLogo:hover {
+    fill: black;
+}
+
+.social {
+    position:absolute;
+    bottom: 0.5em;
+    right: 1em;
+    z-index: 1; 
+    font-size: 1.5em;
+}
+.fa {
+    text-decoration: none;
+    border-radius: 50%;
+    padding-left: 0.1em;
+    color: var(--blue);
+}
+.fa:hover {
+    color: black;
+}
+
+/* Het startscherm. */
+.startScreen {
+    position: fixed;
+    height: 100vh;
+    width: 100vw;
+    display: grid;
+    place-items: center;
+    cursor: pointer;
+    user-select:none;
+    background-color: white;
+}
+
+.startScreenElements {
+    display: grid;
+    place-items: center;
+}
+
+.startText {
+    position: relative;
+    color: black;
+    font-family: Montserrat, 'Open Sans', Verdana, sans-serif;
+    font-weight: 700;
+    font-size: 4em;
+    margin-bottom: 1em;
+    /* margin-right: 5.5em; */
+}
+blue {
+    color: var(--blue);
+}
+
+
+.spinner {
+    position: relative;
+    width: 5em;
+    height: 5em;
+    padding-right: 2em;
+    /* margin-bottom: 30px; */
+}
+.spinner:before, .spinner:after {
+    content: "";
+    display: block;
+    position: absolute;
+    border-width: 4px;
+    border-style: solid;
+    border-radius: 50%;
+}
+
+@-webkit-keyframes rotate-animation {
+    0% {
+        transform: rotate(0deg);
+    }
+    100% {
+        transform: rotate(360deg);
+    }
+    }
+    @keyframes rotate-animation {
+    0% {
+        transform: rotate(0deg);
+    }
+    100% {
+        transform: rotate(360deg);
+    }
+}
+@-webkit-keyframes anti-rotate-animation {
+    0% {
+        transform: rotate(0deg);
+    }
+    100% {
+        transform: rotate(-360deg);
+    }
+}
+@keyframes anti-rotate-animation {
+    0% {
+        transform: rotate(0deg);
+    }
+    100% {
+        transform: rotate(-360deg);
+    }
+}
+.spinner.spinner-1:before {
+    width: 117px;
+    height: 117px;
+    border-bottom-color: var(--blue);
+    border-right-color: var(--blue);
+    border-top-color: rgba(0, 169, 224, 0);
+    border-left-color: rgba(0, 169, 224, 0);
+    top: 0px;
+    left: 0px;
+    -webkit-animation: rotate-animation 1s linear 0s infinite;
+            animation: rotate-animation 1s linear 0s infinite;
+}
+.spinner.spinner-1:after {
+    width: 81.9px;
+    height: 81.9px;
+    border-bottom-color: var(--blue);
+    border-right-color: var(--blue);
+    border-top-color: rgba(0, 169, 224, 0);
+    border-left-color: rgba(0, 169, 224, 0);
+    top: 17.55px;
+    left: 17.55px;
+    -webkit-animation: anti-rotate-animation 0.85s linear 0s infinite;
+            animation: anti-rotate-animation 0.85s linear 0s infinite;
+}
+
+.videoSwap, .videoRecord {
+    display: none;
+}
+
+/* ThreeJS canvas. */
+.canvas {
+    cursor: pointer;
+    width: 100%;
+    height: 100%;
+    display: block;
+}
