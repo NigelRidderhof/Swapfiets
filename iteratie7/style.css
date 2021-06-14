@@ -149,7 +149,7 @@ blue {
             animation: anti-rotate-animation 0.85s linear 0s infinite;
 }
 
-.video {
+.video, .video2 {
     display: none;
 }
 

@@ -6,7 +6,7 @@ import {
     GLTFLoader
 } from '../modules/GLTFLoader.js';
 
-let scene, camera, controls, loader, gltfScene, cameraStartPosition, cameraSwapPosition, video, videoObject, sound, clickPermission = true, backButtonSwap;
+let scene, camera, controls, loader, gltfScene, cameraStartPosition, cameraSwapPosition, cameraLocationPosition, video, video2, videoObject, videoObject2, infoPlane, sound, clickPermission = true, backButtonSwap, backButtonLocation;
 const blue = new THREE.Color( 0x00a9e0 ), floorGray = new THREE.Color( 0xb0b0b0 );
 
 function main() {
@@ -62,7 +62,11 @@ function main() {
     const button2 = new THREE.Mesh( circle2, new THREE.MeshBasicMaterial( { color: blue, transparent: true, opacity: 0.9, side: THREE.DoubleSide } ) );
     button2.position.set(-0.27, 1.4, 0.17);
     button2.name = "buttonVittoria";
-    scene.add( button1, button2 );
+    const circle3 = new THREE.CircleBufferGeometry( 0.15, 32 );
+    const button3 = new THREE.Mesh( circle3, new THREE.MeshBasicMaterial( { color: blue, transparent: true, opacity: 0.9, side: THREE.DoubleSide } ) );
+    button3.position.set(1.44, 0, 0.17);
+    button3.name = "buttonLocation";
+    scene.add( button1, button2, button3 );
 
     video = document.querySelector( ".video" );
     const videoTexture = new THREE.VideoTexture( video );
@@ -75,6 +79,27 @@ function main() {
     // scene.add( videoObject );
     cameraSwapPosition = { x: -1.8, y: 0, z: 1 };
 
+    video2 = document.querySelector( ".video2" );
+    const videoTexture2 = new THREE.VideoTexture( video2 );
+    let planeVideo2 = new THREE.PlaneGeometry( 1.8, 1.125 );
+    videoObject2 = new THREE.Mesh( planeVideo2, new THREE.MeshBasicMaterial( { map: videoTexture2 } ) );
+    videoObject2.position.set( 1.83, 0, 0.25 );
+    videoObject2.rotation.y = Math.PI * 0.052;
+    videoObject2.name = "videoObject2";
+    videoObject2.scale.set( 0.6 , 0.6, 1 );
+    // scene.add( videoObject );
+    cameraLocationPosition = { x: 1.8, y: 0, z: 1 }
+
+    const plane3 = new THREE.PlaneBufferGeometry( 0.513, 0.473 );
+    const infoTexture = new THREE.TextureLoader().load( '../assets/info.png' );
+    infoPlane = new THREE.Mesh( plane3, new THREE.MeshBasicMaterial( { map: infoTexture, transparent: true } ) );
+    infoPlane.position.set(-0.35, 1.54, 0.26);
+    infoPlane.scale.set( 0.9, 0.9, 1 );
+    infoPlane.rotation.y = Math.PI * -0.15;
+    infoPlane.rotation.x = Math.PI * 0.03;
+    infoPlane.name = "infoPlane";
+    // scene.add( infoPlane );
+
     const plane4 = new THREE.PlaneBufferGeometry( 0.326, 0.274 );
     const backTexture = new THREE.TextureLoader().load( '../assets/back_icon.png' );
     backButtonSwap = new THREE.Mesh( plane4, new THREE.MeshBasicMaterial( { map: backTexture, transparent: true } ) );
@@ -82,6 +107,12 @@ function main() {
     backButtonSwap.scale.set( 0.25, 0.25, 1 );
     backButtonSwap.name = "backButtonSwap";
     // scene.add( backButtonSwap );
+    const plane5 = new THREE.PlaneBufferGeometry( 0.326, 0.274 );
+    backButtonLocation = new THREE.Mesh( plane5, new THREE.MeshBasicMaterial( { map: backTexture, transparent: true } ) );
+    backButtonLocation.position.set( 2.28, -0.42, 0.17 );
+    backButtonLocation.scale.set( 0.25, 0.25, 1 );
+    backButtonLocation.name = "backButtonLocation";
+    // scene.add( backButtonLocation );
 
     // Belichting.
     const light = new THREE.SpotLight( 0xffffff, 0.9, 10 );
@@ -246,6 +277,16 @@ function main() {
                                 videoControl();
                             }
                                 break;
+                        case "videoObject2":
+                            if ( clickPermission) {
+                                videoControl2();
+                            }
+                                break;
+                        case "buttonLocation":
+                            if ( clickPermission) {
+                                locationAnimation( button );
+                            }
+                                break;
                         case "startBG":
                             if ( clickPermission) {
                                 startTheScreen();
@@ -257,6 +298,9 @@ function main() {
                             }
                             break;
                         case "backButtonSwap":
+                            goBack();
+                            break;
+                        case "backButtonLocation":
                             goBack();
                     }
                 }
@@ -350,6 +394,7 @@ function main() {
         document.querySelector(".startScreenElements").style.paddingBottom = '8em';
         cameraStartPosition = { x: 0, y: 0, z: 6.5 }; 
         cameraSwapPosition = { x: -1.8, y: 0, z: 2 };
+        cameraLocationPosition = { x: 1.8, y: 0, z: 2 };
     }
 }
 
@@ -420,7 +465,6 @@ function swapAnimation( button ) {
 
 function videoControl() {
     clickPermission = false;
-    console.log("ewa");
     if ( video.paused ) {
         video.play();
     } else {
@@ -430,12 +474,63 @@ function videoControl() {
         clickPermission = true;
     }, 500 );
 }
+function videoControl2() {
+    clickPermission = false;
+    if ( video2.paused ) {
+        video2.play();
+    } else {
+        video2.pause();
+    }
+    setTimeout( () => { 
+        clickPermission = true;
+    }, 500 );
+}
+
+function locationAnimation( button ) {
+    controls.enabled = false;
+    clickPermission = false;
+    button.material.color = floorGray;
+
+    createjs.Tween.get( camera.position )
+        .to( cameraLocationPosition, 3300, createjs.Ease.getPowInOut( 5 ) )
+        .call( () => { 
+            button.material.color =  blue;
+        } );
+    createjs.Tween.get( controls.target )
+        .to( { x: 1.8, y: 0, z: 0 }, 3300, createjs.Ease.getPowInOut( 5 ) )
+        .addEventListener("change", () => {
+            controls.update();
+        });
+
+    // Video alvast een keer gestart hebben was nodig voor iOS.
+    video2.play();
+    setTimeout( () => { 
+        video2.pause(); 
+    }, 250 ); 
+    
+    setTimeout( () => { 
+        scene.add( videoObject2, backButtonLocation );
+        sound.setVolume( 0.05 );
+        video2.play(); 
+        clickPermission = true;
+    }, 3300 );
+
+    // video.currentTime = 0;
+
+}
 
 function vittoriaAnimation( button ) {
     controls.enabled = false;
     clickPermission = false;
     button.material.color = floorGray;
 
+    setTimeout( () => { 
+        scene.add( infoPlane );
+        setTimeout( () => { 
+            scene.remove( infoPlane );
+        }, 1500 );
+    }, 3500 );
+    
     // sound.play(); 
 
     createjs.Tween.get( camera.position )
@@ -464,11 +559,13 @@ function goBack() {
 
     sound.setVolume( 0.4 );
 
-    console.log("Go back");
-
     scene.remove( videoObject, backButtonSwap );
     video.currentTime = 0;
     video.pause();
+
+    scene.remove( videoObject2, backButtonLocation );
+    video2.currentTime = 0;
+    video2.pause();
 
     createjs.Tween.get( camera.position )
         .to( cameraStartPosition, 3000, createjs.Ease.getPowInOut( 5 ) )
