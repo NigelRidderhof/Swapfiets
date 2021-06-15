@@ -6,7 +6,7 @@ import {
     GLTFLoader
 } from '../modules/GLTFLoader.js';
 
-let scene, camera, controls, loader, gltfScene, cameraStartPosition, cameraSwapPosition, targetSwapPosition, cameraRecordPosition, targetRecordPosition, cameraVittoriaPosition, buttonSwap, buttonVittoria, buttonRecord, videoSwap, videoRecord, videoObjectSwap, videoObjectRecord, vittoriaObject, sound, backButtonSwap, backButtonRecord, clickPermission = true;
+let scene, camera, controls, loader, gltfScene, cameraStartPosition, cameraSwapPosition, targetSwapPosition, cameraRecordPosition, targetRecordPosition, cameraVittoriaPosition, targetVittoriaPosition, buttonSwap, buttonVittoria, buttonRecord, videoSwap, videoRecord, videoObjectSwap, videoObjectRecord, vittoriaObject, sound, backButtonSwap, backButtonVittoria, backButtonRecord, clickPermission = true;
 const blue = new THREE.Color( 0x00a9e0 ), floorGray = new THREE.Color( 0xb0b0b0 );
 
 function main() {
@@ -46,7 +46,8 @@ function main() {
     buttonSwap.name = "buttonSwap";
     const circle2 = new THREE.CircleBufferGeometry( 0.15, 32 );
     buttonVittoria = new THREE.Mesh( circle2, new THREE.MeshBasicMaterial( { color: blue, transparent: true, opacity: 0.9, side: THREE.DoubleSide } ) );
-    buttonVittoria.position.set( -0.32, 1.43, 0.17 );
+    // buttonVittoria.position.set( -0.32, 1.43, 0.17 );
+    buttonVittoria.position.set( -0.42, 1.86, 0.14 );
     buttonVittoria.name = "buttonVittoria";
     const circle3 = new THREE.CircleBufferGeometry( 0.15, 32 );
     buttonRecord = new THREE.Mesh( circle3, new THREE.MeshBasicMaterial( { color: blue, transparent: true, opacity: 0.9, side: THREE.DoubleSide } ) );
@@ -78,17 +79,18 @@ function main() {
     cameraRecordPosition = { x: 1.8, y: 0, z: 1 };
     targetRecordPosition = { x: 1.6, y: 0, z: 0 };
 
-    const planeVittoria = new THREE.PlaneBufferGeometry( 0.513, 0.473 );
+    // const planeVittoria = new THREE.PlaneBufferGeometry( 0.513, 0.473 );
+    const planeVittoria = new THREE.PlaneBufferGeometry( 2, 1.125 );
     const textureVittoria = new THREE.TextureLoader().load( '../assets/info.png' );
     vittoriaObject = new THREE.Mesh( planeVittoria, new THREE.MeshBasicMaterial( { map: textureVittoria, transparent: true } ) );
-    vittoriaObject.position.set(-0.48, 1.61, 0.26);
-    vittoriaObject.scale.set( 0.42, 0.42, 1 );
-    vittoriaObject.rotation.y = Math.PI * -0.17;
-    vittoriaObject.rotation.x = Math.PI * 0.03;
-    vittoriaObject.rotation.z = Math.PI * 0.01;
+    vittoriaObject.position.set(-0.35, 1.64, 0.14);
+    vittoriaObject.scale.set( 0.2, 0.2, 1 );
+    vittoriaObject.rotation.y = Math.PI * -0.03;
+    vittoriaObject.rotation.x = Math.PI * 0.01;
     vittoriaObject.name = "vittoriaObject";
     // scene.add( vittoriaObject );
-    cameraVittoriaPosition = { x: -.38, y: 0.53, z: 0.08 };
+    cameraVittoriaPosition = { x: -0.45, y: 1.65, z: 0.33 };
+    targetVittoriaPosition = { x: -0.30, y: 1.65, z: -0.33 };
 
     const planeBackSwap = new THREE.PlaneBufferGeometry( 0.326, 0.274 );
     const backTexture = new THREE.TextureLoader().load( '../assets/back_icon.png' );
@@ -100,6 +102,18 @@ function main() {
     backButtonSwap.rotation.x = Math.PI * 0.02;
     backButtonSwap.name = "backButtonSwap";
     // scene.add( backButtonSwap );
+    const planeBackVittoria = new THREE.PlaneBufferGeometry( 0.326, 0.274 );
+    backButtonVittoria = new THREE.Mesh( planeBackVittoria, new THREE.MeshBasicMaterial( { map: backTexture, transparent: true } ) );
+    backButtonVittoria.position.set(-0.21, 1.76, 0.18);
+    backButtonVittoria.scale.set( 0.07, 0.07, 1 );
+    backButtonVittoria.rotation.y = Math.PI * -0.03;
+    backButtonVittoria.rotation.x = Math.PI * 0.01;
+    backButtonVittoria.name = "backButtonVittoria";
+    // scene.add( backButtonVittoria );
+    const guiLight1 = gui.addFolder('Light 1');
+    guiLight1.add(backButtonVittoria.position, 'y').min(-10).max(10).step(0.01);
+    guiLight1.add(backButtonVittoria.position, 'x').min(-10).max(10).step(0.01);
+    guiLight1.add(backButtonVittoria.position, 'z').min(-10).max(10).step(0.01);
     const planeBackRecord = new THREE.PlaneBufferGeometry( 0.326, 0.274 );
     backButtonRecord = new THREE.Mesh( planeBackRecord, new THREE.MeshBasicMaterial( { map: backTexture, transparent: true } ) );
     backButtonRecord.position.set( 2.28, -0.42, 0.17 );
@@ -115,9 +129,9 @@ function main() {
     // const spotLightHelper = new THREE.SpotLightHelper(light, 1);
     scene.add( light );
     // const guiLight1 = gui.addFolder('Light 1');
-    // guiLight1.add(light.position, 'y').min(-100).max(100).step(0.1);
-    // guiLight1.add(light.position, 'x').min(-100).max(100).step(0.1);
-    // guiLight1.add(light.position, 'z').min(-100).max(100).step(0.1);
+    // guiLight1.add(light.position, 'y').min(-10).max(10).step(0.01);
+    // guiLight1.add(light.position, 'x').min(-10).max(10).step(0.01);
+    // guiLight1.add(light.position, 'z').min(-10).max(10).step(0.01);
     // guiLight1.add(light, 'intensity').min(0).max(10).step(0.1);
     // guiLight1.add(light, 'penumbra').min(0).max(1).step(0.1);
 
@@ -277,6 +291,9 @@ function main() {
                     case "backButtonSwap":
                         goBack();
                         break;
+                    case "backButtonVittoria":
+                        goBack();
+                        break;
                     case "backButtonRecord":
                         goBack();
                 }
@@ -364,9 +381,13 @@ function main() {
         document.querySelector(".pressElements").style.fontSize = '2em';
         cameraStartPosition = { x: 0, y: 0, z: 6.5 }; 
         cameraSwapPosition = { x: 0.45, y: 1.62, z: 0.65 };
-        backButtonSwap.position.set( 0.22, 1.74, 0.18 );
+        backButtonSwap.position.set( 0.23, 1.745, 0.19 );
+        backButtonSwap.scale.set( 0.06, 0.06, 1 );
         cameraRecordPosition = { x: 1.8, y: 0, z: 2 };
-        cameraVittoriaPosition = { x: -0.48, y: 0.53, z: 0.26 };
+        cameraVittoriaPosition = { x: -0.46, y: 1.64, z: 0.72 };
+        targetVittoriaPosition = { x: -0.29, y: 1.65, z: -0.33 };
+        vittoriaObject.rotation.y = Math.PI * 0.01;
+        backButtonVittoria.position.set(-0.205, 1.765, 0.18);
     }
 }
 
@@ -499,35 +520,23 @@ function vittoriaAnimation( button ) {
     button.material.color = floorGray;
 
     setTimeout( () => { 
-        scene.add( vittoriaObject );
-        setTimeout( () => { 
-            scene.remove( vittoriaObject );
-        }, 1500 );
+        scene.add( vittoriaObject, backButtonVittoria );
     }, 3500 );
     
     // sound.play(); 
 
     createjs.Tween.get( camera.position )
         .to( cameraVittoriaPosition, 3000, createjs.Ease.getPowInOut( 5 ) )
-        .wait( 1700 )
-        .to( cameraStartPosition, 3000, createjs.Ease.getPowInOut( 5 ) )
         .call( () => { 
-            buttonsVisible();
-            controls.enabled = true; 
-            clickPermission = true;
             button.material.color =  blue;
         } );
     createjs.Tween.get( controls.target )
-        .to( { x: 0.89, y: 1.85, z: -1.7 }, 3000, createjs.Ease.getPowInOut( 5 ) )
-        .wait( 1700 )
-        .to( { x: 0, y: 0, z: 0 }, 3000, createjs.Ease.getPowInOut( 5 ) )
+        .to( targetVittoriaPosition, 3000, createjs.Ease.getPowInOut( 5 ) )
         .addEventListener("change", () => {
             controls.update();
         });
     createjs.Tween.get( gltfScene.rotation )
         .to( { z: Math.PI * -2 }, 3000, createjs.Ease.getPowInOut( 5 ) )
-        .wait( 1700 )
-        .to( { z: 0 }, 3000, createjs.Ease.getPowInOut( 5 ) );
 }
 
 function goBack() {
@@ -541,6 +550,8 @@ function goBack() {
     scene.remove( videoObjectRecord, backButtonRecord );
     videoRecord.currentTime = 0;
     videoRecord.pause();
+
+    scene.remove( vittoriaObject, backButtonVittoria );
 
     createjs.Tween.get( camera.position )
         .to( cameraStartPosition, 3000, createjs.Ease.getPowInOut( 5 ) )
