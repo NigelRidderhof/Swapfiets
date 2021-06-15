@@ -7,7 +7,7 @@ import {
 } from '../modules/GLTFLoader.js';
 
 let scene, camera, controls, loader, gltfScene, cameraStartPosition, cameraSwapPosition, targetSwapPosition, cameraRecordPosition, targetRecordPosition, cameraVittoriaPosition, targetVittoriaPosition, buttonSwap, buttonVittoria, buttonRecord, ringButtonSwap, ringButtonVittoria, ringButtonRecord, videoSwap, videoRecord, videoObjectSwap, videoObjectRecord, vittoriaObject, sound, backButtonSwap, backButtonVittoria, backButtonRecord, clickPermission = true;
-const blue = new THREE.Color( 0x00a9e0 ), floorGray = new THREE.Color( 0xb0b0b0 );
+const blue = new THREE.Color( 0x00a9e0 ), floorGray = new THREE.Color( 0xffffff );
 
 function main() {
     let canvas = document.querySelector('.canvas');
@@ -154,7 +154,7 @@ function main() {
     // scene.add( backButtonRecord );
 
     // Belichting.
-    const light = new THREE.SpotLight( 0xffffff, 0.9, 10 );
+    const light = new THREE.SpotLight( 0xffffff, 0.5, 10 );
     light.position.set( 0, 3.9, 1.5 );
     light.angle = Math.PI / 1.15;
     light.penumbra = 1;
@@ -167,7 +167,7 @@ function main() {
     // guiLight1.add(light, 'intensity').min(0).max(10).step(0.1);
     // guiLight1.add(light, 'penumbra').min(0).max(1).step(0.1);
 
-    const dirLight = new THREE.DirectionalLight( 0xffffff, 1.4 );
+    const dirLight = new THREE.DirectionalLight( 0xffffff, 1.2 );
     dirLight.position.set( 0, 1.5, 1 );
     dirLight.castShadow = true;
     dirLight.shadow.mapSize.width = 1024;
@@ -181,14 +181,14 @@ function main() {
     dirLight.shadow.camera.far = 20;
     scene.add( dirLight );
 
-    const ambientLlight = new THREE.AmbientLight( floorGray, 3.2 );
+    const ambientLlight = new THREE.AmbientLight( floorGray, 1.53 );
     scene.add(ambientLlight);
 
     // De vloer.
     const groundMesh = new THREE.Mesh(
         new THREE.PlaneBufferGeometry( 45, 45 ),
         new THREE.MeshPhongMaterial( {
-            color: 0x4a4a4a,
+            color: 0x636363,
             depthWrite: false
         } )
     );
