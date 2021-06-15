@@ -6,7 +6,7 @@ import {
     GLTFLoader
 } from '../modules/GLTFLoader.js';
 
-let scene, camera, controls, loader, gltfScene, cameraStartPosition, cameraSwapPosition, targetSwapPosition, cameraRecordPosition, targetRecordPosition, cameraVittoriaPosition, targetVittoriaPosition, buttonSwap, buttonVittoria, buttonRecord, videoSwap, videoRecord, videoObjectSwap, videoObjectRecord, vittoriaObject, sound, backButtonSwap, backButtonVittoria, backButtonRecord, clickPermission = true;
+let scene, camera, controls, loader, gltfScene, cameraStartPosition, cameraSwapPosition, targetSwapPosition, cameraRecordPosition, targetRecordPosition, cameraVittoriaPosition, targetVittoriaPosition, buttonSwap, buttonVittoria, buttonRecord, ringButtonSwap, ringButtonVittoria, ringButtonRecord, videoSwap, videoRecord, videoObjectSwap, videoObjectRecord, vittoriaObject, sound, backButtonSwap, backButtonVittoria, backButtonRecord, clickPermission = true;
 const blue = new THREE.Color( 0x00a9e0 ), floorGray = new THREE.Color( 0xb0b0b0 );
 
 function main() {
@@ -40,20 +40,52 @@ function main() {
     // controls.enabled = false; 
 
     // Cirkels die gaan functioneren als knoppen. 
+    
     const circle1 = new THREE.CircleBufferGeometry( 0.15, 32 );
-    buttonSwap = new THREE.Mesh( circle1, new THREE.MeshBasicMaterial( { color: blue, transparent: true, opacity: 0.9, side: THREE.DoubleSide } ) );
-    buttonSwap.position.set( 0.44, 1.85, 0.14 );
+    buttonSwap = new THREE.Mesh( circle1, new THREE.MeshBasicMaterial( { color: blue, transparent: true, opacity: 0, side: THREE.DoubleSide } ) );
+    buttonSwap.position.set( 0.38, 1.65, 0.14 );
     buttonSwap.name = "buttonSwap";
     const circle2 = new THREE.CircleBufferGeometry( 0.15, 32 );
-    buttonVittoria = new THREE.Mesh( circle2, new THREE.MeshBasicMaterial( { color: blue, transparent: true, opacity: 0.9, side: THREE.DoubleSide } ) );
+    buttonVittoria = new THREE.Mesh( circle2, new THREE.MeshBasicMaterial( { color: blue, transparent: true, opacity: 0, side: THREE.DoubleSide } ) );
     // buttonVittoria.position.set( -0.32, 1.43, 0.17 );
-    buttonVittoria.position.set( -0.42, 1.86, 0.14 );
+    buttonVittoria.position.set( -0.41, 1.63, 0.14 );
     buttonVittoria.name = "buttonVittoria";
     const circle3 = new THREE.CircleBufferGeometry( 0.15, 32 );
-    buttonRecord = new THREE.Mesh( circle3, new THREE.MeshBasicMaterial( { color: blue, transparent: true, opacity: 0.9, side: THREE.DoubleSide } ) );
+    buttonRecord = new THREE.Mesh( circle3, new THREE.MeshBasicMaterial( { color: blue, transparent: true, opacity: 0, side: THREE.DoubleSide } ) );
     buttonRecord.position.set(1.44, 0, 0.17);
     buttonRecord.name = "buttonRecord";
     scene.add( buttonSwap, buttonVittoria, buttonRecord );
+
+    const ringMaterial = new THREE.MeshPhongMaterial( { color: 0x000, emissive: blue, shininess: 10, opacity: 0.9, transparent: true, side: THREE.DoubleSide } );
+    
+    const ringSwap = new THREE.RingBufferGeometry( 0.14, 0.18, 32 );
+    ringButtonSwap = new THREE.Mesh( ringSwap, ringMaterial );
+    ringButtonSwap.position.set( 0.38, 1.65, 0.141 );
+    ringButtonSwap.name = "buttonSwap";
+    const ringVittoria = new THREE.RingBufferGeometry( 0.14, 0.18, 32 );
+    ringButtonVittoria = new THREE.Mesh( ringVittoria, ringMaterial );
+    ringButtonVittoria.position.set( -0.41, 1.63, 0.141 );
+    ringButtonVittoria.name = "buttonVittoria";
+    const ringRecord = new THREE.RingBufferGeometry( 0.14, 0.18, 32 );
+    ringButtonRecord = new THREE.Mesh( ringRecord, ringMaterial );
+    ringButtonRecord.position.set( 1.44, 0, 0.171 );
+    ringButtonRecord.name = "buttonRecord";
+    scene.add ( ringButtonSwap, ringButtonVittoria, ringButtonRecord );
+
+
+    // const innerCircle = new THREE.CircleBufferGeometry( 0.12, 32 );
+    // const innerButton = new THREE.Mesh( innerCircle, new THREE.MeshBasicMaterial( { color: blue, transparent: true, opacity: 0, side: THREE.DoubleSide } ) );
+    // innerButton.position.set( 3, 0, 0.01 );
+    // innerButton.name = "ballButton1";
+    // scene.add( innerButton );
+    // // const ball1 = new THREE.SphereBufferGeometry( 0.15, 32, 32 );
+    // const ball1 = new THREE.RingBufferGeometry( 0.14, 0.18, 32 );
+    // const ballButton1 = new THREE.Mesh( ball1, ringMaterial );
+    // ballButton1.position.set( 3, 0, 0 );
+    // ballButton1.name = "ballButton1";
+    // scene.add( ballButton1 ); 
+
+
 
     videoSwap = document.querySelector( ".videoSwap" );
     const videoTextureSwap = new THREE.VideoTexture( videoSwap );
@@ -321,6 +353,19 @@ function main() {
         renderer.render(scene, camera);
         controls.update();
         requestAnimationFrame(render);
+
+        const timer = 0.0001 * Date.now();
+        // ringMaterial.emissive.setHSL( 0.54, 1, 0.35 * ( 0.5 + 0.5 * Math.sin( 35 * timer ) ) );
+        ringMaterial.opacity = 0.75 + ( -0.25 * Math.sin( 35 * timer ) ) ;
+        ringButtonSwap.scale.x = 0.9 + ( 0.1 * Math.sin( 35 * timer ) ) ;
+        ringButtonSwap.scale.y = 0.9 + ( 0.1 * Math.sin( 35 * timer ) ) ;
+        ringButtonSwap.scale.z = 0.9 + ( 0.1 * Math.sin( 35 * timer ) ) ;
+        ringButtonVittoria.scale.x = 0.9 + ( 0.1 * Math.sin( 35 * timer ) ) ;
+        ringButtonVittoria.scale.y = 0.9 + ( 0.1 * Math.sin( 35 * timer ) ) ;
+        ringButtonVittoria.scale.z = 0.9 + ( 0.1 * Math.sin( 35 * timer ) ) ;
+        ringButtonRecord.scale.x = 0.9 + ( 0.1 * Math.sin( 35 * timer ) ) ;
+        ringButtonRecord.scale.y = 0.9 + ( 0.1 * Math.sin( 35 * timer ) ) ;
+        ringButtonRecord.scale.z = 0.9 + ( 0.1 * Math.sin( 35 * timer ) ) ;
     }
     requestAnimationFrame(render);
 
@@ -453,6 +498,7 @@ function swapAnimation( button ) {
     createjs.Tween.get( gltfScene.rotation )
         .to( { z: Math.PI * 2 }, 3300, createjs.Ease.getPowInOut( 5 ) )
 
+
     // Video alvast een keer gestart hebben was nodig voor iOS.
     videoSwap.play();
     setTimeout( () => { 
@@ -566,11 +612,14 @@ function goBack() {
         .addEventListener("change", () => {
             controls.update();
         });
+
+    createjs.Tween.get( gltfScene.rotation )
+        .to( { z: 0 }, 3300, createjs.Ease.getPowInOut( 5 ) )
 }
 
 function buttonsVisible() {
-    scene.add( buttonSwap, buttonVittoria, buttonRecord );
+    scene.add( buttonSwap, buttonVittoria, buttonRecord, ringButtonSwap, ringButtonVittoria, ringButtonRecord );
 }
 function buttonsInvisible() {
-    scene.remove( buttonSwap, buttonVittoria, buttonRecord );
+    scene.remove( buttonSwap, buttonVittoria, buttonRecord, ringButtonSwap, ringButtonVittoria, ringButtonRecord );
 }
