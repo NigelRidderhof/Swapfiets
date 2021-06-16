@@ -234,7 +234,8 @@ function main() {
     // Het inladen van het .glb bestand met de conductive wall.
     loader = new GLTFLoader( loadingManager);
     loader.load( 
-        '../assets/Swapfiets_wheel3.glb',
+        // '../assets/Swapfiets_wheel3.glb',
+        '../assets/Swapfiets_wheel3_90.glb',
         function( gltf ){
             gltf.scene.scale.set( 5, 5, 5 );
             gltf.scene.position.set( 0, 0, 0 );
@@ -622,4 +623,25 @@ function buttonsVisible() {
 }
 function buttonsInvisible() {
     scene.remove( buttonSwap, buttonVittoria, buttonRecord, ringButtonSwap, ringButtonVittoria, ringButtonRecord );
+}
+
+let androidExtraInteraction = document.querySelector( '.androidExtraInteraction' );
+let ua = navigator.userAgent.toLowerCase();
+let isAndroid = ua.indexOf("android") > -1;
+if(isAndroid) {
+
+    androidExtraInteraction.style.visibility = "visible";
+    androidExtraInteraction.addEventListener( 'pointerdown', androidDoneInteraction );
+    androidExtraInteraction.addEventListener( 'touchstart', androidDoneInteraction );
+
+    function androidDoneInteraction() {
+        androidExtraInteraction.style.opacity = 1;
+        createjs.Tween.get( androidExtraInteraction )
+            .to( { opacity: 0 }, 800 )
+            .call( () => { 
+                androidExtraInteraction.style.visibility = "hidden";
+                androidExtraInteraction.style.zIndex = '-1';
+                // androidExtraInteraction.parentNode.removeChild ( androidExtraInteraction ); 
+            } );
+    }
 }
