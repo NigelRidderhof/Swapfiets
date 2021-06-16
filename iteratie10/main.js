@@ -15,7 +15,7 @@ function main() {
     renderer.shadowMap.enabled = true;
     renderer.shadowMap.type = THREE.PCFSoftShadowMap;
 
-    // const gui = new dat.GUI();
+    const gui = new dat.GUI();
 
     // ThreeJS scene waaraan je de onderdelen toevoegt.
     scene = new THREE.Scene();
@@ -51,7 +51,7 @@ function main() {
     buttonVittoria.name = "buttonVittoria";
     const circle3 = new THREE.CircleBufferGeometry( 0.15, 32 );
     buttonRecord = new THREE.Mesh( circle3, new THREE.MeshBasicMaterial( { color: blue, transparent: true, opacity: 0, side: THREE.DoubleSide } ) );
-    buttonRecord.position.set(1.44, 0, 0.17);
+    buttonRecord.position.set( 1.74, 0.08, 0.14 );
     buttonRecord.name = "buttonRecord";
     scene.add( buttonSwap, buttonVittoria, buttonRecord );
     // De pulsende ringen voor de knoppen.
@@ -66,7 +66,7 @@ function main() {
     ringButtonVittoria.name = "buttonVittoria";
     const ringRecord = new THREE.RingBufferGeometry( 0.14, 0.18, 32 );
     ringButtonRecord = new THREE.Mesh( ringRecord, ringMaterial );
-    ringButtonRecord.position.set( 1.44, 0, 0.171 );
+    ringButtonRecord.position.set( 1.74, 0.08, 0.141 );
     ringButtonRecord.name = "buttonRecord";
     scene.add ( ringButtonSwap, ringButtonVittoria, ringButtonRecord );
 
@@ -85,15 +85,16 @@ function main() {
     targetSwapPosition = { x: 0.30, y: 1.64, z: -0.3 };
     videoRecord = document.querySelector( ".videoRecord" );
     const videoTextureRecord = new THREE.VideoTexture( videoRecord );
-    let planeVideoRecord = new THREE.PlaneGeometry( 1.8, 1.125 );
+    // let planeVideoRecord = new THREE.PlaneGeometry( 1.8, 1.125 );
+    let planeVideoRecord = new THREE.PlaneGeometry( 2, 1.125 );
     videoObjectRecord = new THREE.Mesh( planeVideoRecord, new THREE.MeshBasicMaterial( { map: videoTextureRecord } ) );
-    videoObjectRecord.position.set( 1.83, 0, 0.25 );
-    videoObjectRecord.rotation.y = Math.PI * 0.052;
+    videoObjectRecord.position.set( 1.83, 0.065, 0.25 );
+    videoObjectRecord.rotation.y = Math.PI * 0.43;
     videoObjectRecord.name = "videoObjectRecord";
-    videoObjectRecord.scale.set( 0.6 , 0.6, 1 );
+    videoObjectRecord.scale.set( 0.28 , 0.28, 1 );
     // scene.add( videoObjectRecord );
-    cameraRecordPosition = { x: 1.8, y: 0, z: 1 };
-    targetRecordPosition = { x: 1.6, y: 0, z: 0 };
+    cameraRecordPosition = { x: 2.1, y: 0.08, z: 0.3 };
+    targetRecordPosition = { x: -1 , y: 0, z: -0.155 };
 
     // const planeVittoria = new THREE.PlaneBufferGeometry( 0.513, 0.473 );
     const planeVittoria = new THREE.PlaneBufferGeometry( 2, 1.125 );
@@ -129,8 +130,9 @@ function main() {
     // scene.add( backButtonVittoria );
     const planeBackRecord = new THREE.PlaneBufferGeometry( 0.326, 0.274 );
     backButtonRecord = new THREE.Mesh( planeBackRecord, new THREE.MeshBasicMaterial( { map: backTexture, transparent: true } ) );
-    backButtonRecord.position.set( 2.28, -0.42, 0.17 );
-    backButtonRecord.scale.set( 0.25, 0.25, 1 );
+    backButtonRecord.position.set( 1.8, 0.232, 0.484 );
+    backButtonRecord.rotation.y = Math.PI * 0.43;
+    backButtonRecord.scale.set( 0.1, 0.1, 1 );
     backButtonRecord.name = "backButtonRecord";
     // scene.add( backButtonRecord );
 
@@ -406,7 +408,9 @@ function main() {
         cameraSwapPosition = { x: 0.45, y: 1.62, z: 0.65 };
         backButtonSwap.position.set( 0.23, 1.745, 0.19 );
         backButtonSwap.scale.set( 0.06, 0.06, 1 );
-        cameraRecordPosition = { x: 1.8, y: 0, z: 2 };
+        cameraRecordPosition = { x: 2.64, y: 0.08, z: 0.35 };
+        videoObjectRecord.rotation.y = Math.PI * 0.41;
+        backButtonRecord.position.set( 1.82, 0.238, 0.482 );
         cameraVittoriaPosition = { x: -0.46, y: 1.64, z: 0.72 };
         targetVittoriaPosition = { x: -0.29, y: 1.65, z: -0.33 };
         vittoriaObject.rotation.y = Math.PI * 0.01;
@@ -498,6 +502,8 @@ function recordAnimation() {
         .addEventListener("change", () => {
             controls.update();
         } );
+    createjs.Tween.get( gltfScene.rotation )
+        .to( { z: Math.PI * 1.25 }, 3300, createjs.Ease.getPowInOut( 5 ) );
 
     // Video alvast een keer gestart hebben is nodig voor iOS.
     videoRecord.play();
