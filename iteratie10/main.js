@@ -483,7 +483,7 @@ function swapAnimation() {
         sound.setVolume( 0.05 );
         videoSwap.play(); 
         clickPermission = true;
-    }, 3300 );
+    }, 3600 );
 }
 
 function recordAnimation() {
@@ -510,7 +510,7 @@ function recordAnimation() {
         sound.setVolume( 0.05 );
         videoRecord.play(); 
         clickPermission = true;
-    }, 3300 );
+    }, 3600 );
 }
 
 // Functie voor het pauzeren en starten van video's.
@@ -530,10 +530,6 @@ function vittoriaAnimation() {
     buttonsInvisible();
     controls.enabled = false;
     clickPermission = false;
-
-    setTimeout( () => { 
-        scene.add( vittoriaObject, backButtonVittoria );
-    }, 3500 );
     
     createjs.Tween.get( camera.position )
         .to( cameraVittoriaPosition, 3000, createjs.Ease.getPowInOut( 5 ) );
@@ -543,7 +539,11 @@ function vittoriaAnimation() {
             controls.update();
         } );
     createjs.Tween.get( gltfScene.rotation )
-        .to( { z: Math.PI * -2 }, 3000, createjs.Ease.getPowInOut( 5 ) )
+        .to( { z: Math.PI * -2 }, 3000, createjs.Ease.getPowInOut( 5 ) );
+    
+    setTimeout( () => { 
+        scene.add( vittoriaObject, backButtonVittoria );
+    }, 3600 );
 }
 
 function goBack() {
