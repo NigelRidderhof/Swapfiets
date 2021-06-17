@@ -6,7 +6,7 @@ import {
     GLTFLoader
 } from '../modules/GLTFLoader.js';
 
-let scene, camera, controls, loader, gltfScene, cameraStartPosition, cameraSwapPosition, targetSwapPosition, cameraVittoriaPosition, targetVittoriaPosition, cameraRecordPosition, targetRecordPosition, buttonSwap, buttonVittoria, buttonRecord, ringButtonSwap, ringButtonVittoria, ringButtonRecord, videoSwap, videoRecord, videoObjectSwap, videoObjectRecord, vittoriaObject, sound, backButtonSwap, backButtonVittoria, backButtonRecord, clickPermission = true;
+let scene, camera, controls, loader, gltfScene, cameraStartPosition, cameraSwapPosition, targetSwapPosition, cameraVittoriaPosition, targetVittoriaPosition, cameraRecordPosition, targetRecordPosition, cameraJumboPosition, targetJumboPosition, buttonSwap, buttonVittoria, buttonRecord, buttonJumbo, ringButtonSwap, ringButtonVittoria, ringButtonRecord, ringButtonJumbo, videoSwap, videoRecord, videoObjectSwap, videoObjectRecord, vittoriaObject, jumboObject, sound, backButtonSwap, backButtonVittoria, backButtonRecord, backButtonJumbo, clickPermission = true;
 const blue = new THREE.Color( 0x00a9e0 );
 
 function main() {
@@ -53,7 +53,11 @@ function main() {
     buttonRecord = new THREE.Mesh( circle3, new THREE.MeshBasicMaterial( { color: blue, transparent: true, opacity: 0, side: THREE.DoubleSide } ) );
     buttonRecord.position.set( 1.74, 0.08, 0.14 );
     buttonRecord.name = "buttonRecord";
-    scene.add( buttonSwap, buttonVittoria, buttonRecord );
+    const circle4 = new THREE.CircleBufferGeometry( 0.15, 32 );
+    buttonJumbo = new THREE.Mesh( circle4, new THREE.MeshBasicMaterial( { color: blue, transparent: true, opacity: 0, side: THREE.DoubleSide } ) );
+    buttonJumbo.position.set( -1.55, -0.65, 0.14 );
+    buttonJumbo.name = "buttonJumbo";
+    scene.add( buttonSwap, buttonVittoria, buttonRecord, buttonJumbo );
     // De pulsende ringen voor de knoppen.
     const ringMaterial = new THREE.MeshPhongMaterial( { color: 0x000, emissive: blue, shininess: 10, opacity: 0.9, transparent: true, side: THREE.DoubleSide } );
     const ringSwap = new THREE.RingBufferGeometry( 0.14, 0.18, 32 );
@@ -68,7 +72,11 @@ function main() {
     ringButtonRecord = new THREE.Mesh( ringRecord, ringMaterial );
     ringButtonRecord.position.set( 1.74, 0.08, 0.141 );
     ringButtonRecord.name = "buttonRecord";
-    scene.add ( ringButtonSwap, ringButtonVittoria, ringButtonRecord );
+    const ringJumbo = new THREE.RingBufferGeometry( 0.14, 0.18, 32 );
+    ringButtonJumbo = new THREE.Mesh( ringJumbo, ringMaterial );
+    ringButtonJumbo.position.set( -1.55, -0.65, 0.141 );
+    ringButtonJumbo.name = "buttonJumbo";
+    scene.add ( ringButtonSwap, ringButtonVittoria, ringButtonRecord, ringButtonJumbo );
 
     // De video's in de scene.
     videoSwap = document.querySelector( ".videoSwap" );
@@ -100,7 +108,7 @@ function main() {
     const planeVittoria = new THREE.PlaneBufferGeometry( 2, 1.125 );
     const textureVittoria = new THREE.TextureLoader().load( '../assets/info.png' );
     vittoriaObject = new THREE.Mesh( planeVittoria, new THREE.MeshBasicMaterial( { map: textureVittoria } ) );
-    vittoriaObject.position.set(-0.35, 1.64, 0.14);
+    vittoriaObject.position.set( -0.35, 1.64, 0.14 );
     vittoriaObject.scale.set( 0.2, 0.2, 1 );
     vittoriaObject.rotation.y = Math.PI * -0.03;
     vittoriaObject.rotation.x = Math.PI * 0.01;
@@ -108,6 +116,19 @@ function main() {
     // scene.add( vittoriaObject );
     cameraVittoriaPosition = { x: -0.45, y: 1.65, z: 0.33 };
     targetVittoriaPosition = { x: -0.30, y: 1.65, z: -0.33 };
+
+    const planeJumbo = new THREE.PlaneBufferGeometry( 2, 1.125 );
+    const textureJumbo = new THREE.TextureLoader().load( '../assets/Swapfiets_JumboVisma.png' );
+    jumboObject = new THREE.Mesh( planeJumbo, new THREE.MeshBasicMaterial( { map: textureJumbo } ) );
+    jumboObject.position.set( -1.5, -0.855, 1.3 );
+    jumboObject.scale.set( 0.2, 0.2, 1 );
+    jumboObject.rotation.y = Math.PI * -0.05;
+    jumboObject.rotation.x = Math.PI * 0.01;
+    jumboObject.rotation.z = Math.PI * 0.01;
+    jumboObject.name = "jumboObject";
+    // scene.add( jumboObject );
+    cameraJumboPosition = { x: -1.5, y: -0.85, z: 1.5 };
+    targetJumboPosition = { x: -1.35, y: -0.85, z: -1.5 };
 
     // De terug-knoppen.
     const planeBackSwap = new THREE.PlaneBufferGeometry( 0.326, 0.274 );
@@ -118,23 +139,31 @@ function main() {
     backButtonSwap.scale.set( 0.05, 0.05, 1 );
     backButtonSwap.rotation.y = Math.PI * 0.055;
     backButtonSwap.rotation.x = Math.PI * 0.02;
-    backButtonSwap.name = "backButtonSwap";
+    backButtonSwap.name = "backButton";
     // scene.add( backButtonSwap );
     const planeBackVittoria = new THREE.PlaneBufferGeometry( 0.326, 0.274 );
     backButtonVittoria = new THREE.Mesh( planeBackVittoria, new THREE.MeshBasicMaterial( { map: backTexture, transparent: true } ) );
-    backButtonVittoria.position.set(-0.21, 1.76, 0.18);
+    backButtonVittoria.position.set( -0.205, 1.755, 0.18 );
     backButtonVittoria.scale.set( 0.07, 0.07, 1 );
     backButtonVittoria.rotation.y = Math.PI * -0.03;
     backButtonVittoria.rotation.x = Math.PI * 0.01;
-    backButtonVittoria.name = "backButtonVittoria";
+    backButtonVittoria.name = "backButton";
     // scene.add( backButtonVittoria );
     const planeBackRecord = new THREE.PlaneBufferGeometry( 0.326, 0.274 );
     backButtonRecord = new THREE.Mesh( planeBackRecord, new THREE.MeshBasicMaterial( { map: backTexture, transparent: true } ) );
-    backButtonRecord.position.set( 1.8, 0.232, 0.484 );
+    backButtonRecord.position.set( 1.8, 0.23, 0.484 );
     backButtonRecord.rotation.y = Math.PI * 0.43;
     backButtonRecord.scale.set( 0.1, 0.1, 1 );
-    backButtonRecord.name = "backButtonRecord";
+    backButtonRecord.name = "backButton";
     // scene.add( backButtonRecord );
+    const planeBackJumbo = new THREE.PlaneBufferGeometry( 0.326, 0.274 );
+    backButtonJumbo = new THREE.Mesh( planeBackJumbo, new THREE.MeshBasicMaterial( { map: backTexture, transparent: true } ) );
+    backButtonJumbo.position.set( -1.665, -0.745, 1.3 );
+    backButtonJumbo.scale.set( 0.07, 0.07, 1 );
+    backButtonJumbo.rotation.y = Math.PI * -0.03;
+    backButtonJumbo.rotation.x = Math.PI * 0.01;
+    backButtonJumbo.name = "backButton";
+    // scene.add( backButtonJumbo );
 
     // Belichting.
     const light = new THREE.SpotLight( 0xffffff, 0.5, 10 );
@@ -302,13 +331,12 @@ function main() {
                             recordAnimation();
                         }
                         break;
-                    case "backButtonSwap":
-                        goBack();
+                    case "buttonJumbo":
+                        if ( clickPermission ) {
+                            jumboAnimation();
+                        }
                         break;
-                    case "backButtonVittoria":
-                        goBack();
-                        break;
-                    case "backButtonRecord":
+                    case "backButton":
                         goBack();
                 }
             }
@@ -414,7 +442,9 @@ function main() {
         cameraVittoriaPosition = { x: -0.46, y: 1.64, z: 0.72 };
         targetVittoriaPosition = { x: -0.29, y: 1.65, z: -0.33 };
         vittoriaObject.rotation.y = Math.PI * 0.01;
-        backButtonVittoria.position.set( -0.205, 1.765, 0.18 );
+        backButtonVittoria.position.set( -0.196, 1.765, 0.18 );
+        cameraJumboPosition = { x: -1.525, y: -0.85, z: 1.89 };
+        backButtonJumbo.position.set( -1.675, -0.732, 1.3 );
     }
 }
 
@@ -552,6 +582,26 @@ function vittoriaAnimation() {
     }, 3600 );
 }
 
+function jumboAnimation() {
+    buttonsInvisible();
+    controls.enabled = false;
+    clickPermission = false;
+    
+    createjs.Tween.get( camera.position )
+        .to( cameraJumboPosition, 3000, createjs.Ease.getPowInOut( 5 ) );
+    createjs.Tween.get( controls.target )
+        .to( targetJumboPosition, 3000, createjs.Ease.getPowInOut( 5 ) )
+        .addEventListener("change", () => {
+            controls.update();
+        } );
+    createjs.Tween.get( gltfScene.rotation )
+        .to( { z: Math.PI * -1.7 }, 3000, createjs.Ease.getPowInOut( 5 ) );
+    
+    setTimeout( () => { 
+        scene.add( jumboObject, backButtonJumbo);
+    }, 3600 );
+}
+
 function goBack() {
 
     sound.setVolume( 0.5 );
@@ -565,6 +615,8 @@ function goBack() {
     videoRecord.pause();
 
     scene.remove( vittoriaObject, backButtonVittoria );
+
+    scene.remove( jumboObject, backButtonJumbo );
 
     createjs.Tween.get( camera.position )
         .to( cameraStartPosition, 3000, createjs.Ease.getPowInOut( 5 ) )
@@ -583,10 +635,10 @@ function goBack() {
 }
 
 function buttonsVisible() {
-    scene.add( buttonSwap, buttonVittoria, buttonRecord, ringButtonSwap, ringButtonVittoria, ringButtonRecord );
+    scene.add( buttonSwap, buttonVittoria, buttonRecord, buttonJumbo, ringButtonSwap, ringButtonVittoria, ringButtonRecord, ringButtonJumbo );
 }
 function buttonsInvisible() {
-    scene.remove( buttonSwap, buttonVittoria, buttonRecord, ringButtonSwap, ringButtonVittoria, ringButtonRecord );
+    scene.remove( buttonSwap, buttonVittoria, buttonRecord, buttonJumbo, ringButtonSwap, ringButtonVittoria, ringButtonRecord, ringButtonJumbo );
 }
 
 // Extra scherm om mee te interacteren voor Android om geluid af te kunnen spelen.
