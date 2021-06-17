@@ -6,7 +6,7 @@ import {
     GLTFLoader
 } from '../modules/GLTFLoader.js';
 
-let scene, camera, controls, loader, gltfScene, cameraStartPosition, cameraSwapPosition, targetSwapPosition, cameraVittoriaPosition, targetVittoriaPosition, cameraRecordPosition, targetRecordPosition, cameraJumboPosition, targetJumboPosition, buttonSwap, buttonVittoria, buttonRecord, buttonJumbo, ringButtonSwap, ringButtonVittoria, ringButtonRecord, ringButtonJumbo, videoSwap, videoVittoria, videoRecord, videoJumbo, videoObjectSwap, videoObjectVittoria, videoObjectRecord, videoObjectJumbo, sound, backButtonSwap, backButtonVittoria, backButtonRecord, backButtonJumbo, clickPermission = true;
+let scene, camera, controls, loader, gltfScene, cameraStartPosition, cameraAnimationFrame1, cameraAnimationFrame2, cameraSwapPosition, targetSwapPosition, cameraVittoriaPosition, targetVittoriaPosition, cameraRecordPosition, targetRecordPosition, cameraJumboPosition, targetJumboPosition, buttonSwap, buttonVittoria, buttonRecord, buttonJumbo, ringButtonSwap, ringButtonVittoria, ringButtonRecord, ringButtonJumbo, videoSwap, videoVittoria, videoRecord, videoJumbo, videoObjectSwap, videoObjectVittoria, videoObjectRecord, videoObjectJumbo, sound, backButtonSwap, backButtonVittoria, backButtonRecord, backButtonJumbo, clickPermission = true;
 const blue = new THREE.Color( 0x00a9e0 );
 
 function main() {
@@ -15,7 +15,7 @@ function main() {
     renderer.shadowMap.enabled = true;
     renderer.shadowMap.type = THREE.PCFSoftShadowMap;
 
-    const gui = new dat.GUI();
+    // const gui = new dat.GUI();
 
     // ThreeJS scene waaraan je de onderdelen toevoegt.
     scene = new THREE.Scene();
@@ -26,6 +26,8 @@ function main() {
     camera = new THREE.PerspectiveCamera( 70, window.innerWidth / window.innerHeight, 0.1, 1000 );
     camera.position.set( 0, 0.4, 20 );
     cameraStartPosition = { x: 0, y: 0, z: 4 };      // Later nodig om de camera na een perspectiefverandering te resetten.
+    cameraAnimationFrame1 = { x: 0, y: 0.7, z: 0.5 };
+    cameraAnimationFrame2 = { x: 0, y: 1.5, z: 1 };
     camera.lookAt( scene.position );
 
     // De instellingen voor de manier waarop met de scene geïnteracteerd kan worden.
@@ -441,7 +443,10 @@ function main() {
         document.querySelector( ".startScreenImage" ).style.left = "3vw";
         document.querySelector( ".topLeftElements" ).style.fontSize = "2em";
         document.querySelector( ".pressElements" ).style.fontSize = "2em";
+        camera.position.set( 10, 0.4, 22 );
         cameraStartPosition = { x: 0, y: 0, z: 6.5 }; 
+        cameraAnimationFrame1 = { x: 0, y: 0.7, z: 2 };
+        cameraAnimationFrame2 = { x: 0, y: 1.5, z: 5 };
         cameraSwapPosition = { x: 0.45, y: 1.62, z: 0.65 };
         backButtonSwap.position.set( 0.23, 1.745, 0.19 );
         backButtonSwap.scale.set( 0.06, 0.06, 1 );
@@ -480,21 +485,42 @@ function startTheScreen() {
             startScreen.style.zIndex = '-1';
             // startScreen.parentNode.removeChild ( startScreen ); 
         } );
-    
+
     createjs.Tween.get( camera.position )
-        .to( cameraStartPosition, 3000, createjs.Ease.getPowInOut( 5 ) )
+        .to( cameraAnimationFrame1, 11000, createjs.Ease.getPowInOut( 3 ) )
+        .to( cameraAnimationFrame2, 8000, createjs.Ease.getPowInOut( 3 ) )
+        .to( cameraStartPosition, 8000, createjs.Ease.getPowInOut( 3 ) )
         .call( () => { 
             buttonsVisible();
             controls.enabled = true;
             clickPermission = true;
         } );
     createjs.Tween.get( controls.target )
-        .to( { x: 0, y: 0, z: 0 }, 3000, createjs.Ease.getPowInOut( 5 ) )
+        .to( { x: 0, y: 1.55, z: 0 }, 11000, createjs.Ease.getPowInOut( 3 ) )
+        .to( { x: 0, y: 1.05, z: -0.5 }, 7000, createjs.Ease.getPowInOut( 3 ) )
+        .to( { x: 0, y: 0, z: 0 }, 9000, createjs.Ease.getPowInOut( 3 ) )
         .addEventListener("change", () => {
             controls.update();
         } );
     createjs.Tween.get( gltfScene.rotation )
-        .to( { y: Math.PI * 1 }, 3000, createjs.Ease.getPowInOut( 5 ) );
+        .to( { y: Math.PI * 1 }, 11000, createjs.Ease.getPowInOut( 4 ) )
+        .to( { y: Math.PI * 2 }, 8000, createjs.Ease.getPowInOut( 3 ) )
+        .to( { y: Math.PI * 1, z: Math.PI * 2 }, 8000, createjs.Ease.getPowInOut( 3 ) );
+
+    // createjs.Tween.get( camera.position )
+    //     .to( cameraStartPosition, 3000, createjs.Ease.getPowInOut( 5 ) )
+    //     .call( () => { 
+    //         buttonsVisible();
+    //         controls.enabled = true;
+    //         clickPermission = true;
+    //     } );
+    // createjs.Tween.get( controls.target )
+    //     .to( { x: 0, y: 0, z: 0 }, 3000, createjs.Ease.getPowInOut( 5 ) )
+    //     .addEventListener("change", () => {
+    //         controls.update();
+    //     } );
+    // createjs.Tween.get( gltfScene.rotation )
+    //     .to( { y: Math.PI * 1 }, 3000, createjs.Ease.getPowInOut( 5 ) );
 
     // console.clear();
 }
@@ -513,7 +539,7 @@ function swapAnimation() {
             controls.update();
         } );
     createjs.Tween.get( gltfScene.rotation )
-        .to( { z: Math.PI * 2 }, 3300, createjs.Ease.getPowInOut( 5 ) );
+        .to( { z: Math.PI * 4 }, 3300, createjs.Ease.getPowInOut( 5 ) );
 
     // Video alvast een keer gestart hebben is nodig voor iOS.
     videoSwap.play();
@@ -542,7 +568,7 @@ function recordAnimation() {
             controls.update();
         } );
     createjs.Tween.get( gltfScene.rotation )
-        .to( { z: Math.PI * 1.25 }, 3300, createjs.Ease.getPowInOut( 5 ) );
+        .to( { z: Math.PI * 0.25 }, 3300, createjs.Ease.getPowInOut( 5 ) );
 
     // Video alvast een keer gestart hebben is nodig voor iOS.
     videoRecord.play();
@@ -583,7 +609,7 @@ function vittoriaAnimation() {
             controls.update();
         } );
     createjs.Tween.get( gltfScene.rotation )
-        .to( { z: Math.PI * -2 }, 3000, createjs.Ease.getPowInOut( 5 ) );
+        .to( { z: Math.PI * 0 }, 3000, createjs.Ease.getPowInOut( 5 ) );
     
     // Video alvast een keer gestart hebben is nodig voor iOS.
     videoVittoria.play();
@@ -611,7 +637,7 @@ function jumboAnimation() {
             controls.update();
         } );
     createjs.Tween.get( gltfScene.rotation )
-        .to( { z: Math.PI * -1.7 }, 3000, createjs.Ease.getPowInOut( 5 ) );
+        .to( { z: Math.PI * 0.3 }, 3000, createjs.Ease.getPowInOut( 5 ) );
     
     // Video alvast een keer gestart hebben is nodig voor iOS.
     videoJumbo.play();
@@ -659,7 +685,7 @@ function goBack() {
             controls.update();
         } );
     createjs.Tween.get( gltfScene.rotation )
-        .to( { z: 0 }, 3300, createjs.Ease.getPowInOut( 5 ) );
+        .to( { z: Math.PI * 2 }, 3300, createjs.Ease.getPowInOut( 5 ) );
 }
 
 function buttonsVisible() {
