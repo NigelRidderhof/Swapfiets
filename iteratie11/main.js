@@ -6,7 +6,7 @@ import {
     GLTFLoader
 } from '../modules/GLTFLoader.js';
 
-let scene, camera, controls, loader, gltfScene, cameraStartPosition, cameraSwapPosition, targetSwapPosition, cameraVittoriaPosition, targetVittoriaPosition, cameraRecordPosition, targetRecordPosition, cameraJumboPosition, targetJumboPosition, buttonSwap, buttonVittoria, buttonRecord, buttonJumbo, ringButtonSwap, ringButtonVittoria, ringButtonRecord, ringButtonJumbo, videoSwap, videoRecord, videoObjectSwap, videoObjectRecord, vittoriaObject, jumboObject, sound, backButtonSwap, backButtonVittoria, backButtonRecord, backButtonJumbo, clickPermission = true;
+let scene, camera, controls, loader, gltfScene, cameraStartPosition, cameraSwapPosition, targetSwapPosition, cameraVittoriaPosition, targetVittoriaPosition, cameraRecordPosition, targetRecordPosition, cameraJumboPosition, targetJumboPosition, buttonSwap, buttonVittoria, buttonRecord, buttonJumbo, ringButtonSwap, ringButtonVittoria, ringButtonRecord, ringButtonJumbo, videoSwap, videoVittoria, videoRecord, videoObjectSwap, videoObjectVittoria, videoObjectRecord, jumboObject, sound, backButtonSwap, backButtonVittoria, backButtonRecord, backButtonJumbo, clickPermission = true;
 const blue = new THREE.Color( 0x00a9e0 );
 
 function main() {
@@ -104,16 +104,29 @@ function main() {
     cameraRecordPosition = { x: 2.1, y: 0.08, z: 0.3 };
     targetRecordPosition = { x: -1 , y: 0, z: -0.155 };
 
-    // const planeVittoria = new THREE.PlaneBufferGeometry( 0.513, 0.473 );
-    const planeVittoria = new THREE.PlaneBufferGeometry( 2, 1.125 );
-    const textureVittoria = new THREE.TextureLoader().load( '../assets/info.png' );
-    vittoriaObject = new THREE.Mesh( planeVittoria, new THREE.MeshBasicMaterial( { map: textureVittoria } ) );
-    vittoriaObject.position.set( -0.35, 1.64, 0.14 );
-    vittoriaObject.scale.set( 0.2, 0.2, 1 );
-    vittoriaObject.rotation.y = Math.PI * -0.03;
-    vittoriaObject.rotation.x = Math.PI * 0.01;
-    vittoriaObject.name = "vittoriaObject";
-    // scene.add( vittoriaObject );
+    // // const planeVittoria = new THREE.PlaneBufferGeometry( 0.513, 0.473 );
+    // const planeVittoria = new THREE.PlaneBufferGeometry( 2, 1.125 );
+    // const textureVittoria = new THREE.TextureLoader().load( '../assets/info.png' );
+    // vittoriaObject = new THREE.Mesh( planeVittoria, new THREE.MeshBasicMaterial( { map: textureVittoria } ) );
+    // vittoriaObject.position.set( -0.35, 1.64, 0.14 );
+    // vittoriaObject.scale.set( 0.2, 0.2, 1 );
+    // vittoriaObject.rotation.y = Math.PI * -0.03;
+    // vittoriaObject.rotation.x = Math.PI * 0.01;
+    // vittoriaObject.name = "vittoriaObject";
+    // // scene.add( vittoriaObject );
+    // cameraVittoriaPosition = { x: -0.45, y: 1.65, z: 0.33 };
+    // targetVittoriaPosition = { x: -0.30, y: 1.65, z: -0.33 };
+
+    videoVittoria = document.querySelector( ".videoSwap" );
+    const videoTextureVittoria = new THREE.VideoTexture( videoSwap );
+    let planeVideoVittoria = new THREE.PlaneGeometry( 2, 1.125 );
+    videoObjectVittoria = new THREE.Mesh( planeVideoVittoria, new THREE.MeshBasicMaterial( { map: videoTextureVittoria } ) );
+    videoObjectVittoria.position.set( -0.35, 1.64, 0.14 );
+    videoObjectVittoria.rotation.y = Math.PI * -0.03;
+    videoObjectVittoria.rotation.x = Math.PI * 0.01;
+    videoObjectVittoria.name = "videoObjectSwap";
+    videoObjectVittoria.scale.set( 0.2, 0.2, 1 );
+    // scene.add( videoObjectVittoria );
     cameraVittoriaPosition = { x: -0.45, y: 1.65, z: 0.33 };
     targetVittoriaPosition = { x: -0.30, y: 1.65, z: -0.33 };
 
@@ -319,6 +332,11 @@ function main() {
                     case "videoObjectSwap":
                         if ( clickPermission ) {
                             videoControl( videoSwap );
+                        }
+                        break;
+                    case "videoObjectVittoria":
+                        if ( clickPermission ) {
+                            videoControl( videoVittoria );
                         }
                         break;
                     case "videoObjectRecord":
@@ -576,8 +594,16 @@ function vittoriaAnimation() {
     createjs.Tween.get( gltfScene.rotation )
         .to( { z: Math.PI * -2 }, 3000, createjs.Ease.getPowInOut( 5 ) );
     
+    // Video alvast een keer gestart hebben is nodig voor iOS.
+    videoVittoria.play();
     setTimeout( () => { 
-        scene.add( vittoriaObject, backButtonVittoria );
+        videoVittoria.pause(); 
+    }, 250 ); 
+
+    setTimeout( () => { 
+        scene.add( videoObjectVittoria, backButtonVittoria );
+        videoVittoria.play(); 
+        clickPermission = true;
     }, 3600 );
 }
 
@@ -609,11 +635,13 @@ function goBack() {
     videoSwap.currentTime = 0;
     videoSwap.pause();
 
+    scene.remove( videoObjectVittoria, backButtonVittoria );
+    videoVittoria.currentTime = 0;
+    videoVittoria.pause();
+
     scene.remove( videoObjectRecord, backButtonRecord );
     videoRecord.currentTime = 0;
     videoRecord.pause();
-
-    scene.remove( vittoriaObject, backButtonVittoria );
 
     scene.remove( jumboObject, backButtonJumbo );
 
