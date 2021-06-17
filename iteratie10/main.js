@@ -543,7 +543,6 @@ function recordAnimation() {
     
     setTimeout( () => { 
         scene.add( videoObjectRecord, backButtonRecord );
-        sound.setVolume( 0.05 );
         videoRecord.play(); 
         clickPermission = true;
     }, 3600 );
