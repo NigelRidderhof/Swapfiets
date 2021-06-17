@@ -6,7 +6,7 @@ import {
     GLTFLoader
 } from '../modules/GLTFLoader.js';
 
-let scene, camera, controls, loader, gltfScene, cameraStartPosition, cameraSwapPosition, targetSwapPosition, cameraVittoriaPosition, targetVittoriaPosition, cameraRecordPosition, targetRecordPosition, cameraJumboPosition, targetJumboPosition, buttonSwap, buttonVittoria, buttonRecord, buttonJumbo, ringButtonSwap, ringButtonVittoria, ringButtonRecord, ringButtonJumbo, videoSwap, videoVittoria, videoRecord, videoObjectSwap, videoObjectVittoria, videoObjectRecord, jumboObject, sound, backButtonSwap, backButtonVittoria, backButtonRecord, backButtonJumbo, clickPermission = true;
+let scene, camera, controls, loader, gltfScene, cameraStartPosition, cameraSwapPosition, targetSwapPosition, cameraVittoriaPosition, targetVittoriaPosition, cameraRecordPosition, targetRecordPosition, cameraJumboPosition, targetJumboPosition, buttonSwap, buttonVittoria, buttonRecord, buttonJumbo, ringButtonSwap, ringButtonVittoria, ringButtonRecord, ringButtonJumbo, videoSwap, videoVittoria, videoRecord, videoJumbo, videoObjectSwap, videoObjectVittoria, videoObjectRecord, videoObjectJumbo, sound, backButtonSwap, backButtonVittoria, backButtonRecord, backButtonJumbo, clickPermission = true;
 const blue = new THREE.Color( 0x00a9e0 );
 
 function main() {
@@ -91,6 +91,18 @@ function main() {
     // De camera en target posities nodig om naartoe te animeren.
     cameraSwapPosition = { x: 0.4, y: 1.64, z: 0.3 };
     targetSwapPosition = { x: 0.30, y: 1.64, z: -0.3 };
+    videoVittoria = document.querySelector( ".videoRecord" );
+    const videoTextureVittoria = new THREE.VideoTexture( videoVittoria );
+    let planeVideoVittoria = new THREE.PlaneGeometry( 2, 1.125 );
+    videoObjectVittoria = new THREE.Mesh( planeVideoVittoria, new THREE.MeshBasicMaterial( { map: videoTextureVittoria } ) );
+    videoObjectVittoria.position.set( -0.35, 1.64, 0.14 );
+    videoObjectVittoria.rotation.y = Math.PI * -0.03;
+    videoObjectVittoria.rotation.x = Math.PI * 0.01;
+    videoObjectVittoria.name = "videoObjectVittoria";
+    videoObjectVittoria.scale.set( 0.2, 0.2, 1 );
+    // scene.add( videoObjectVittoria );
+    cameraVittoriaPosition = { x: -0.45, y: 1.65, z: 0.33 };
+    targetVittoriaPosition = { x: -0.30, y: 1.65, z: -0.33 };
     videoRecord = document.querySelector( ".videoRecord" );
     const videoTextureRecord = new THREE.VideoTexture( videoRecord );
     // let planeVideoRecord = new THREE.PlaneGeometry( 1.8, 1.125 );
@@ -103,43 +115,17 @@ function main() {
     // scene.add( videoObjectRecord );
     cameraRecordPosition = { x: 2.1, y: 0.08, z: 0.3 };
     targetRecordPosition = { x: -1 , y: 0, z: -0.155 };
-
-    // // const planeVittoria = new THREE.PlaneBufferGeometry( 0.513, 0.473 );
-    // const planeVittoria = new THREE.PlaneBufferGeometry( 2, 1.125 );
-    // const textureVittoria = new THREE.TextureLoader().load( '../assets/info.png' );
-    // vittoriaObject = new THREE.Mesh( planeVittoria, new THREE.MeshBasicMaterial( { map: textureVittoria } ) );
-    // vittoriaObject.position.set( -0.35, 1.64, 0.14 );
-    // vittoriaObject.scale.set( 0.2, 0.2, 1 );
-    // vittoriaObject.rotation.y = Math.PI * -0.03;
-    // vittoriaObject.rotation.x = Math.PI * 0.01;
-    // vittoriaObject.name = "vittoriaObject";
-    // // scene.add( vittoriaObject );
-    // cameraVittoriaPosition = { x: -0.45, y: 1.65, z: 0.33 };
-    // targetVittoriaPosition = { x: -0.30, y: 1.65, z: -0.33 };
-
-    videoVittoria = document.querySelector( ".videoSwap" );
-    const videoTextureVittoria = new THREE.VideoTexture( videoSwap );
-    let planeVideoVittoria = new THREE.PlaneGeometry( 2, 1.125 );
-    videoObjectVittoria = new THREE.Mesh( planeVideoVittoria, new THREE.MeshBasicMaterial( { map: videoTextureVittoria } ) );
-    videoObjectVittoria.position.set( -0.35, 1.64, 0.14 );
-    videoObjectVittoria.rotation.y = Math.PI * -0.03;
-    videoObjectVittoria.rotation.x = Math.PI * 0.01;
-    videoObjectVittoria.name = "videoObjectSwap";
-    videoObjectVittoria.scale.set( 0.2, 0.2, 1 );
-    // scene.add( videoObjectVittoria );
-    cameraVittoriaPosition = { x: -0.45, y: 1.65, z: 0.33 };
-    targetVittoriaPosition = { x: -0.30, y: 1.65, z: -0.33 };
-
-    const planeJumbo = new THREE.PlaneBufferGeometry( 2, 1.125 );
-    const textureJumbo = new THREE.TextureLoader().load( '../assets/Swapfiets_JumboVisma.png' );
-    jumboObject = new THREE.Mesh( planeJumbo, new THREE.MeshBasicMaterial( { map: textureJumbo } ) );
-    jumboObject.position.set( -1.5, -0.855, 1.3 );
-    jumboObject.scale.set( 0.2, 0.2, 1 );
-    jumboObject.rotation.y = Math.PI * -0.05;
-    jumboObject.rotation.x = Math.PI * 0.01;
-    jumboObject.rotation.z = Math.PI * 0.01;
-    jumboObject.name = "jumboObject";
-    // scene.add( jumboObject );
+    videoJumbo = document.querySelector( ".videoRecord" );
+    const videoTextureJumbo = new THREE.VideoTexture( videoJumbo );
+    let planeVideoJumbo = new THREE.PlaneGeometry( 2, 1.125 );
+    videoObjectJumbo = new THREE.Mesh( planeVideoJumbo, new THREE.MeshBasicMaterial( { map: videoTextureJumbo } ) );
+    videoObjectJumbo.position.set( -1.5, -0.855, 1.3 );
+    videoObjectJumbo.rotation.y = Math.PI * -0.05;
+    videoObjectJumbo.rotation.x = Math.PI * 0.01;
+    videoObjectJumbo.rotation.z = Math.PI * 0.01;
+    videoObjectJumbo.name = "videoObjectJumbo";
+    videoObjectJumbo.scale.set( 0.2, 0.2, 1 );
+    // scene.add( videoObjectJumbo );
     cameraJumboPosition = { x: -1.5, y: -0.85, z: 1.5 };
     targetJumboPosition = { x: -1.35, y: -0.85, z: -1.5 };
 
@@ -329,6 +315,16 @@ function main() {
                             vittoriaAnimation();
                         }
                         break;
+                    case "buttonRecord":
+                        if ( clickPermission ) {
+                            recordAnimation();
+                        }
+                        break;
+                    case "buttonJumbo":
+                        if ( clickPermission ) {
+                            jumboAnimation();
+                        }
+                        break;
                     case "videoObjectSwap":
                         if ( clickPermission ) {
                             videoControl( videoSwap );
@@ -344,14 +340,9 @@ function main() {
                             videoControl( videoRecord );
                         }
                         break;
-                    case "buttonRecord":
+                    case "videoObjectJumbo":
                         if ( clickPermission ) {
-                            recordAnimation();
-                        }
-                        break;
-                    case "buttonJumbo":
-                        if ( clickPermission ) {
-                            jumboAnimation();
+                            videoControl( videoJumbo );
                         }
                         break;
                     case "backButton":
@@ -459,7 +450,7 @@ function main() {
         backButtonRecord.position.set( 1.82, 0.238, 0.482 );
         cameraVittoriaPosition = { x: -0.46, y: 1.64, z: 0.72 };
         targetVittoriaPosition = { x: -0.29, y: 1.65, z: -0.33 };
-        vittoriaObject.rotation.y = Math.PI * 0.01;
+        videoObjectVittoria.rotation.y = Math.PI * 0.01;
         backButtonVittoria.position.set( -0.196, 1.765, 0.18 );
         cameraJumboPosition = { x: -1.525, y: -0.85, z: 1.89 };
         backButtonJumbo.position.set( -1.675, -0.732, 1.3 );
@@ -622,8 +613,16 @@ function jumboAnimation() {
     createjs.Tween.get( gltfScene.rotation )
         .to( { z: Math.PI * -1.7 }, 3000, createjs.Ease.getPowInOut( 5 ) );
     
+    // Video alvast een keer gestart hebben is nodig voor iOS.
+    videoJumbo.play();
     setTimeout( () => { 
-        scene.add( jumboObject, backButtonJumbo);
+        videoJumbo.pause(); 
+    }, 250 ); 
+    
+    setTimeout( () => { 
+        scene.add( videoObjectJumbo, backButtonJumbo);
+        videoJumbo.play(); 
+        clickPermission = true;
     }, 3600 );
 }
 
@@ -643,7 +642,9 @@ function goBack() {
     videoRecord.currentTime = 0;
     videoRecord.pause();
 
-    scene.remove( jumboObject, backButtonJumbo );
+    scene.remove( videoObjectJumbo, backButtonJumbo );
+    videoJumbo.currentTime = 0;
+    videoJumbo.pause();
 
     createjs.Tween.get( camera.position )
         .to( cameraStartPosition, 3000, createjs.Ease.getPowInOut( 5 ) )
