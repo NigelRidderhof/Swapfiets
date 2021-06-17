@@ -106,7 +106,7 @@ function main() {
 
     // const planeVittoria = new THREE.PlaneBufferGeometry( 0.513, 0.473 );
     const planeVittoria = new THREE.PlaneBufferGeometry( 2, 1.125 );
-    const textureVittoria = new THREE.TextureLoader().load( '../assets/info.png' );
+    const textureVittoria = new THREE.TextureLoader().load( '../assets/Vittoria_info.png' );
     vittoriaObject = new THREE.Mesh( planeVittoria, new THREE.MeshBasicMaterial( { map: textureVittoria } ) );
     vittoriaObject.position.set( -0.35, 1.64, 0.14 );
     vittoriaObject.scale.set( 0.2, 0.2, 1 );
@@ -118,7 +118,7 @@ function main() {
     targetVittoriaPosition = { x: -0.30, y: 1.65, z: -0.33 };
 
     const planeJumbo = new THREE.PlaneBufferGeometry( 2, 1.125 );
-    const textureJumbo = new THREE.TextureLoader().load( '../assets/Swapfiets_JumboVisma.png' );
+    const textureJumbo = new THREE.TextureLoader().load( '../assets/JumboVisma_Swapfiets_info.png' );
     jumboObject = new THREE.Mesh( planeJumbo, new THREE.MeshBasicMaterial( { map: textureJumbo } ) );
     jumboObject.position.set( -1.5, -0.855, 1.3 );
     jumboObject.scale.set( 0.2, 0.2, 1 );
