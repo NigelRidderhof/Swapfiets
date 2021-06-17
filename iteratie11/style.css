@@ -275,7 +275,7 @@ a > .websiteLinkLogo:hover {
 
 
 /* De video elementen nodig voor de video's in de 3D omgeving. */
-.videoSwap, .videoRecord {
+.videoSwap, .videoVittoria, .videoRecord, .videoJumbo {
     display: none;
 }
 

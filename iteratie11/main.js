@@ -91,7 +91,7 @@ function main() {
     // De camera en target posities nodig om naartoe te animeren.
     cameraSwapPosition = { x: 0.4, y: 1.64, z: 0.3 };
     targetSwapPosition = { x: 0.30, y: 1.64, z: -0.3 };
-    videoVittoria = document.querySelector( ".videoRecord" );
+    videoVittoria = document.querySelector( ".videoVittoria" );
     const videoTextureVittoria = new THREE.VideoTexture( videoVittoria );
     let planeVideoVittoria = new THREE.PlaneGeometry( 2, 1.125 );
     videoObjectVittoria = new THREE.Mesh( planeVideoVittoria, new THREE.MeshBasicMaterial( { map: videoTextureVittoria } ) );
@@ -115,7 +115,7 @@ function main() {
     // scene.add( videoObjectRecord );
     cameraRecordPosition = { x: 2.1, y: 0.08, z: 0.3 };
     targetRecordPosition = { x: -1 , y: 0, z: -0.155 };
-    videoJumbo = document.querySelector( ".videoRecord" );
+    videoJumbo = document.querySelector( ".videoJumbo" );
     const videoTextureJumbo = new THREE.VideoTexture( videoJumbo );
     let planeVideoJumbo = new THREE.PlaneGeometry( 2, 1.125 );
     videoObjectJumbo = new THREE.Mesh( planeVideoJumbo, new THREE.MeshBasicMaterial( { map: videoTextureJumbo } ) );
