@@ -265,8 +265,8 @@ function main() {
     sound = new THREE.Audio( listener );
     const audioLoader = new THREE.AudioLoader();
     audioLoader.load(
-        // '../assets/backgroundMusic.ogg', 
-        '../assets/voice_over.mp3', 
+        '../assets/Swapfiets_muziek_voice-over.mp3', 
+        // '../assets/voice_over.mp3', 
         function( buffer ) {
             sound.setBuffer( buffer );
             sound.setVolume( 0.5 );
