@@ -673,20 +673,21 @@ function goBack() {
     sound.setVolume( 0.5 );
 
     scene.remove( videoObjectSwap, backButtonSwap );
-    videoSwap.currentTime = 0;
     videoSwap.pause();
+    videoSwap.currentTime = 0;
+    
 
     scene.remove( videoObjectVittoria, backButtonVittoria );
-    videoVittoria.currentTime = 0;
     videoVittoria.pause();
+    videoVittoria.currentTime = 0;
 
     scene.remove( videoObjectRecord, backButtonRecord );
-    videoRecord.currentTime = 0;
     videoRecord.pause();
+    videoRecord.currentTime = 0;
 
     scene.remove( videoObjectJumbo, backButtonJumbo );
-    videoJumbo.currentTime = 0;
     videoJumbo.pause();
+    videoJumbo.currentTime = 0;
 
     createjs.Tween.get( camera.position )
         .to( cameraStartPosition, 3000, createjs.Ease.getPowInOut( 5 ) )
@@ -739,15 +740,10 @@ if ( ua.indexOf( 'safari' ) != -1 ) {
     if ( ua.indexOf( 'chrome' ) > -1 ) {
       // Chrome
     } else {
-        cameraSwapPosition = { x: 0.45, y: 1.62, z: 0.56 };
-        backButtonSwap.position.set( 0.23, 1.742, 0.19 );
-        cameraRecordPosition = { x: 2.54, y: 0.08, z: 0.33 };
-        // cameraRecordPosition = { x: 2.64, y: 0.08, z: 0.35 };
-        cameraVittoriaPosition = { x: -0.46, y: 1.64, z: 0.63 };
-        cameraJumboPosition = { x: -1.525, y: -0.85, z: 1.80 };
-        // cameraSwapPosition = { x: 0.45, y: 1.62, z: 0.65 };
-        // cameraRecordPosition = { x: 2.64, y: 0.08, z: 0.35 };
-        // cameraVittoriaPosition = { x: -0.46, y: 1.64, z: 0.72 };
-        // cameraJumboPosition = { x: -1.525, y: -0.85, z: 1.89 };
+        cameraSwapPosition = { x: 0.45, y: 1.62, z: 0.60 };
+        backButtonSwap.position.set( 0.23, 1.743, 0.19 );
+        cameraRecordPosition = { x: 2.59, y: 0.08, z: 0.33 };
+        cameraVittoriaPosition = { x: -0.44, y: 1.64, z: 0.67 };
+        cameraJumboPosition = { x: -1.521, y: -0.85, z: 1.84 };
     }
 }
