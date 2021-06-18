@@ -503,25 +503,25 @@ function startTheScreen() {
         } );
 
     createjs.Tween.get( camera.position )
-        .to( cameraAnimationFrame1, 1100, createjs.Ease.getPowInOut( 3 ) )
-        .to( cameraAnimationFrame2, 800, createjs.Ease.getPowInOut( 3 ) )
-        .to( cameraStartPosition, 800, createjs.Ease.getPowInOut( 3 ) )
+        .to( cameraAnimationFrame1, 9000, createjs.Ease.getPowInOut( 3 ) )
+        .to( cameraAnimationFrame2, 6000, createjs.Ease.getPowInOut( 3 ) )
+        .to( cameraStartPosition, 6000, createjs.Ease.getPowInOut( 3 ) )
         .call( () => { 
             buttonsVisible();
             controls.enabled = true;
             clickPermission = true;
         } );
     createjs.Tween.get( controls.target )
-        .to( { x: 0, y: 1.55, z: 0 }, 1100, createjs.Ease.getPowInOut( 3 ) )
-        .to( { x: 0, y: 1.05, z: -0.5 }, 700, createjs.Ease.getPowInOut( 3 ) )
-        .to( { x: 0, y: 0, z: 0 }, 900, createjs.Ease.getPowInOut( 3 ) )
+        .to( { x: 0, y: 1.55, z: 0 }, 9000, createjs.Ease.getPowInOut( 3 ) )
+        .to( { x: 0, y: 1.05, z: -0.5 }, 5000, createjs.Ease.getPowInOut( 3 ) )
+        .to( { x: 0, y: 0, z: 0 }, 7000, createjs.Ease.getPowInOut( 3 ) )
         .addEventListener("change", () => {
             controls.update();
         } );
     createjs.Tween.get( gltfScene.rotation )
-        .to( { y: Math.PI * 1 }, 1100, createjs.Ease.getPowInOut( 4 ) )
-        .to( { y: Math.PI * 2 }, 800, createjs.Ease.getPowInOut( 3 ) )
-        .to( { y: Math.PI * 1, z: Math.PI * 2 }, 800, createjs.Ease.getPowInOut( 3 ) );
+        .to( { y: Math.PI * 1 }, 9000, createjs.Ease.getPowInOut( 4 ) )
+        .to( { y: Math.PI * 2 }, 6000, createjs.Ease.getPowInOut( 3 ) )
+        .to( { y: Math.PI * 1, z: Math.PI * 2 }, 6000, createjs.Ease.getPowInOut( 3 ) );
 
     // createjs.Tween.get( camera.position )
     //     .to( cameraStartPosition, 3000, createjs.Ease.getPowInOut( 5 ) )
@@ -566,6 +566,7 @@ function swapAnimation() {
     setTimeout( () => { 
         scene.add( videoObjectSwap, backButtonSwap );
         sound.setVolume( 0.05 );
+        sound2.setVolume( 0.05 );
         videoSwap.play(); 
         clickPermission = true;
     }, 3600 );
@@ -671,6 +672,7 @@ function jumboAnimation() {
 function goBack() {
 
     sound.setVolume( 0.5 );
+    sound2.setVolume( 0.5 );
 
     scene.remove( videoObjectSwap, backButtonSwap );
     videoSwap.pause();
