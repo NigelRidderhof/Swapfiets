@@ -6,7 +6,7 @@ import {
     GLTFLoader
 } from '../modules/GLTFLoader.js';
 
-let scene, camera, controls, loader, gltfScene, cameraStartPosition, cameraAnimationFrame1, cameraAnimationFrame2, cameraSwapPosition, targetSwapPosition, cameraVittoriaPosition, targetVittoriaPosition, cameraRecordPosition, targetRecordPosition, cameraJumboPosition, targetJumboPosition, buttonSwap, buttonVittoria, buttonRecord, buttonJumbo, ringButtonSwap, ringButtonVittoria, ringButtonRecord, ringButtonJumbo, videoSwap, videoVittoria, videoRecord, videoJumbo, videoObjectSwap, videoObjectVittoria, videoObjectRecord, videoObjectJumbo, sound, backButtonSwap, backButtonVittoria, backButtonRecord, backButtonJumbo, clickPermission = true;
+let scene, camera, controls, loader, gltfScene, cameraStartPosition, cameraAnimationFrame1, cameraAnimationFrame2, cameraSwapPosition, targetSwapPosition, cameraVittoriaPosition, targetVittoriaPosition, cameraRecordPosition, targetRecordPosition, cameraJumboPosition, targetJumboPosition, buttonSwap, buttonVittoria, buttonRecord, buttonJumbo, ringButtonSwap, ringButtonVittoria, ringButtonRecord, ringButtonJumbo, videoSwap, videoVittoria, videoRecord, videoJumbo, videoObjectSwap, videoObjectVittoria, videoObjectRecord, videoObjectJumbo, sound, sound2, backButtonSwap, backButtonVittoria, backButtonRecord, backButtonJumbo, clickPermission = true;
 const blue = new THREE.Color( 0x00a9e0 );
 
 function main() {
@@ -211,9 +211,10 @@ function main() {
 
     // Het inladen van de assets en wanneer dit klaar is het laadscherm uitfaden en laten verwijderen.
     let audioBufferLoaded = false;
+    let audioBuffer2Loaded = false;
     let restLoaded = false;
     function checkAllLoaded () {
-        if (audioBufferLoaded && restLoaded ) {
+        if (audioBufferLoaded && audioBuffer2Loaded && restLoaded ) {
             console.log( "All items loaded." );
 
             const loadingScreen = document.querySelector( ".loadingScreen" );
@@ -267,19 +268,33 @@ function main() {
     sound = new THREE.Audio( listener );
     const audioLoader = new THREE.AudioLoader();
     audioLoader.load(
-        '../assets/Swapfiets_muziek_voice-over.mp3', 
-        // '../assets/voice_over.mp3', 
+        '../assets/Swapfiets_muziek.mp3', 
         function( buffer ) {
             sound.setBuffer( buffer );
             sound.setVolume( 0.5 );
             sound.setLoop( true );
-            if (buffer) {
+            if ( buffer ) {
                 console.log(buffer);
                 audioBufferLoaded = true;
                 checkAllLoaded();
             }
         }
     );
+    sound2 = new THREE.Audio( listener );
+    audioLoader.load(
+        '../assets/Swapfiets_voice-over.mp3', 
+        function( buffer ) {
+            sound2.setBuffer( buffer );
+            sound2.setVolume( 0.5 );
+            // sound2.setLoop( true );
+            if ( buffer ) {
+                console.log( buffer );
+                audioBuffer2Loaded = true;
+                checkAllLoaded();
+            }
+        }
+    );
+
 
     function resizeRendererToDisplaySize(renderer) {
         const canvas = renderer.domElement;
@@ -473,6 +488,7 @@ startScreen.addEventListener( 'touchstart', startTheScreen );
 function startTheScreen() {
     buttonsInvisible();
     sound.play(); 
+    sound2.play(); 
 
     controls.enabled = false; 
     clickPermission = false;
