@@ -503,25 +503,25 @@ function startTheScreen() {
         } );
 
     createjs.Tween.get( camera.position )
-        .to( cameraAnimationFrame1, 11000, createjs.Ease.getPowInOut( 3 ) )
-        .to( cameraAnimationFrame2, 8000, createjs.Ease.getPowInOut( 3 ) )
-        .to( cameraStartPosition, 8000, createjs.Ease.getPowInOut( 3 ) )
+        .to( cameraAnimationFrame1, 1100, createjs.Ease.getPowInOut( 3 ) )
+        .to( cameraAnimationFrame2, 800, createjs.Ease.getPowInOut( 3 ) )
+        .to( cameraStartPosition, 800, createjs.Ease.getPowInOut( 3 ) )
         .call( () => { 
             buttonsVisible();
             controls.enabled = true;
             clickPermission = true;
         } );
     createjs.Tween.get( controls.target )
-        .to( { x: 0, y: 1.55, z: 0 }, 11000, createjs.Ease.getPowInOut( 3 ) )
-        .to( { x: 0, y: 1.05, z: -0.5 }, 7000, createjs.Ease.getPowInOut( 3 ) )
-        .to( { x: 0, y: 0, z: 0 }, 9000, createjs.Ease.getPowInOut( 3 ) )
+        .to( { x: 0, y: 1.55, z: 0 }, 1100, createjs.Ease.getPowInOut( 3 ) )
+        .to( { x: 0, y: 1.05, z: -0.5 }, 700, createjs.Ease.getPowInOut( 3 ) )
+        .to( { x: 0, y: 0, z: 0 }, 900, createjs.Ease.getPowInOut( 3 ) )
         .addEventListener("change", () => {
             controls.update();
         } );
     createjs.Tween.get( gltfScene.rotation )
-        .to( { y: Math.PI * 1 }, 11000, createjs.Ease.getPowInOut( 4 ) )
-        .to( { y: Math.PI * 2 }, 8000, createjs.Ease.getPowInOut( 3 ) )
-        .to( { y: Math.PI * 1, z: Math.PI * 2 }, 8000, createjs.Ease.getPowInOut( 3 ) );
+        .to( { y: Math.PI * 1 }, 1100, createjs.Ease.getPowInOut( 4 ) )
+        .to( { y: Math.PI * 2 }, 800, createjs.Ease.getPowInOut( 3 ) )
+        .to( { y: Math.PI * 1, z: Math.PI * 2 }, 800, createjs.Ease.getPowInOut( 3 ) );
 
     // createjs.Tween.get( camera.position )
     //     .to( cameraStartPosition, 3000, createjs.Ease.getPowInOut( 5 ) )
@@ -715,7 +715,7 @@ function buttonsInvisible() {
 let androidExtraInteraction = document.querySelector( ".androidExtraInteraction" );
 let ua = navigator.userAgent.toLowerCase();
 let isAndroid = ua.indexOf( "android" ) > -1;
-if(isAndroid) {
+if( isAndroid ) {
 
     androidExtraInteraction.style.visibility = "visible";
     androidExtraInteraction.addEventListener( 'pointerdown', androidDoneInteraction );
@@ -730,5 +730,24 @@ if(isAndroid) {
                 androidExtraInteraction.style.zIndex = '-1';
                 // androidExtraInteraction.parentNode.removeChild ( androidExtraInteraction ); 
             } );
+    }
+}
+
+// Andere zooms voor Safari omdat bij iOS apparaten het perspectief wat verder is.
+if ( ua.indexOf( 'safari' ) != -1 ) { 
+    // Deze if is nodig omdat anders vooralsnog bij Chrome de effecten ook toegepast worden.
+    if ( ua.indexOf( 'chrome' ) > -1 ) {
+      // Chrome
+    } else {
+        cameraSwapPosition = { x: 0.45, y: 1.62, z: 0.56 };
+        backButtonSwap.position.set( 0.23, 1.742, 0.19 );
+        cameraRecordPosition = { x: 2.54, y: 0.08, z: 0.33 };
+        // cameraRecordPosition = { x: 2.64, y: 0.08, z: 0.35 };
+        cameraVittoriaPosition = { x: -0.46, y: 1.64, z: 0.63 };
+        cameraJumboPosition = { x: -1.525, y: -0.85, z: 1.80 };
+        // cameraSwapPosition = { x: 0.45, y: 1.62, z: 0.65 };
+        // cameraRecordPosition = { x: 2.64, y: 0.08, z: 0.35 };
+        // cameraVittoriaPosition = { x: -0.46, y: 1.64, z: 0.72 };
+        // cameraJumboPosition = { x: -1.525, y: -0.85, z: 1.89 };
     }
 }
