@@ -6,8 +6,9 @@ import {
     GLTFLoader
 } from '../modules/GLTFLoader.js';
 
-let scene, camera, controls, loader, gltfScene, cameraStartPosition, cameraAnimationFrame1, cameraAnimationFrame2, cameraSwapPosition, targetSwapPosition, cameraVittoriaPosition, targetVittoriaPosition, cameraRecordPosition, targetRecordPosition, cameraJumboPosition, targetJumboPosition, buttonSwap, buttonVittoria, buttonRecord, buttonJumbo, ringButtonSwap, ringButtonVittoria, ringButtonRecord, ringButtonJumbo, videoSwap, videoVittoria, videoRecord, videoJumbo, videoObjectSwap, videoObjectVittoria, videoObjectRecord, videoObjectJumbo, sound, sound2, backButtonSwap, backButtonVittoria, backButtonRecord, backButtonJumbo, clickPermission = true;
+let scene, camera, controls, loader, gltfScene, cameraStartPosition, cameraAnimationFrame1, cameraAnimationFrame2, cameraSwapPosition, targetSwapPosition, cameraVittoriaPosition, targetVittoriaPosition, cameraRecordPosition, targetRecordPosition, cameraJumboPosition, targetJumboPosition, buttonSwap, buttonVittoria, buttonRecord, buttonJumbo, ringButtonSwap, ringButtonVittoria, ringButtonRecord, ringButtonJumbo, videoSwap, videoVittoria, videoRecord, videoJumbo, videoObjectSwap, videoObjectVittoria, videoObjectRecord, videoObjectJumbo, backButtonSwap, backButtonVittoria, backButtonRecord, backButtonJumbo, clickPermission = true;
 const blue = new THREE.Color( 0x00a9e0 );
+let backgroundMusic = document.querySelector(".backgroundMusic"), voiceOver = document.querySelector(".voiceOver");
 
 function main() {
     let canvas = document.querySelector( ".canvas" );
@@ -209,40 +210,17 @@ function main() {
     groundMesh.receiveShadow = true;
     scene.add( groundMesh );
 
-    // Het inladen van de assets en wanneer dit klaar is het laadscherm uitfaden en laten verwijderen.
-    let audioBufferLoaded = false;
-    let audioBuffer2Loaded = false;
-    let restLoaded = false;
-    function checkAllLoaded () {
-        if (audioBufferLoaded && audioBuffer2Loaded && restLoaded ) {
-            console.log( "All items loaded." );
-
-            const loadingScreen = document.querySelector( ".loadingScreen" );
-            loadingScreen.style.opacity = 1;
-            createjs.CSSPlugin.install();
-            createjs.Tween.get( loadingScreen )
-                .to( { opacity: 0 }, 800 )
-                .call( () => { 
-                    loadingScreen.parentNode.removeChild ( loadingScreen ); 
-                } );
-        } else {
-            console.log("Something hasn't loaded yet.");
-        }
-    }
-
     // De manager die bijhoudt hoe ver assets zijn die de manager mee heeft gekregen.
     const loadingManager = new THREE.LoadingManager();
     loadingManager.onProgress = function ( item, loaded, total ) {
         console.log( item, loaded, total );
     };
     loadingManager.onLoad = function  () {
-        restLoaded = true;
-        checkAllLoaded();
+        fadeStartScherm();
     };
     loadingManager.onError = function () {
         console.log( "Error bij  het inladen van de assets." );
     };
-
 
     // Het inladen van het .glb bestand met de conductive wall.
     loader = new GLTFLoader( loadingManager );
@@ -261,40 +239,6 @@ function main() {
             scene.add( gltf.scene );
         }
     );
-
-    // Audio instellingen voor het afspelen van geluidsbestanden. 
-    const listener = new THREE.AudioListener();
-    camera.add( listener );
-    sound = new THREE.Audio( listener );
-    const audioLoader = new THREE.AudioLoader();
-    audioLoader.load(
-        '../assets/Swapfiets_muziek.mp3', 
-        function( buffer ) {
-            sound.setBuffer( buffer );
-            sound.setVolume( 0.5 );
-            sound.setLoop( true );
-            if ( buffer ) {
-                console.log(buffer);
-                audioBufferLoaded = true;
-                checkAllLoaded();
-            }
-        }
-    );
-    sound2 = new THREE.Audio( listener );
-    audioLoader.load(
-        '../assets/Swapfiets_voice-over.mp3', 
-        function( buffer ) {
-            sound2.setBuffer( buffer );
-            sound2.setVolume( 0.5 );
-            // sound2.setLoop( true );
-            if ( buffer ) {
-                console.log( buffer );
-                audioBuffer2Loaded = true;
-                checkAllLoaded();
-            }
-        }
-    );
-
 
     function resizeRendererToDisplaySize(renderer) {
         const canvas = renderer.domElement;
@@ -479,16 +423,31 @@ function main() {
 
 main();
 
+// Het laadscherm uitfaden en laten verwijderen.
+function fadeStartScherm () {
+    const loadingScreen = document.querySelector( ".loadingScreen" );
+    loadingScreen.style.opacity = 1;
+    createjs.CSSPlugin.install();
+    setTimeout( () => { 
+        createjs.Tween.get( loadingScreen )
+            .to( { opacity: 0 }, 800 )
+            .call( () => { 
+                loadingScreen.parentNode.removeChild ( loadingScreen ); 
+            } );
+    }, 800 );
+}
 
 // Wanneer op het startscherm gedrukt wordt, start de begin animatie en muziek met voiceover.
 let startScreen = document.querySelector( ".startScreen" );
 startScreen.addEventListener( 'pointerdown', startTheScreen );
 startScreen.addEventListener( 'touchstart', startTheScreen );
+let screenStarted = false; 
 
 function startTheScreen() {
+    screenStarted = true;
     buttonsInvisible();
-    sound.play(); 
-    sound2.play(); 
+    backgroundMusic.play();
+    voiceOver.play();
 
     controls.enabled = false; 
     clickPermission = false;
@@ -541,7 +500,7 @@ function startTheScreen() {
     // console.clear();
 }
 
-
+let SwapVideoActive = false;
 function swapAnimation() {
     buttonsInvisible();
     controls.enabled = false;
@@ -565,8 +524,12 @@ function swapAnimation() {
     
     setTimeout( () => { 
         scene.add( videoObjectSwap, backButtonSwap );
-        sound.setVolume( 0.05 );
-        sound2.setVolume( 0.05 );
+        backgroundMusic.pause();
+        if ( voiceOver.paused ){ 
+        } else {
+            voiceOver.pause();
+        }
+        SwapVideoActive = true;
         videoSwap.play(); 
         clickPermission = true;
     }, 3600 );
@@ -671,11 +634,14 @@ function jumboAnimation() {
 
 function goBack() {
 
-    sound.setVolume( 0.5 );
-    sound2.setVolume( 0.5 );
+    backgroundMusic.play();
+    if ( !voiceOver.ended ){ 
+        voiceOver.play();
+    } 
 
     scene.remove( videoObjectSwap, backButtonSwap );
     videoSwap.pause();
+    SwapVideoActive = false;
     videoSwap.currentTime = 0;
     
 
@@ -749,3 +715,19 @@ if ( ua.indexOf( 'safari' ) != -1 ) {
         cameraJumboPosition = { x: -1.521, y: -0.85, z: 1.84 };
     }
 }
+
+
+backgroundMusic.volume = 0.6;
+voiceOver.volume = 0.6;
+
+document.addEventListener("visibilitychange", function() {
+    if ( document.visibilityState === 'visible' && screenStarted && !SwapVideoActive ) {
+        backgroundMusic.play();
+        if ( !voiceOver.ended ) {
+            voiceOver.play();
+        }
+    } else {
+        backgroundMusic.pause();
+        voiceOver.pause();
+    }
+} );

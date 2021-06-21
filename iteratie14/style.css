@@ -273,6 +273,10 @@ a > .websiteLinkLogo:hover {
             animation: anti-rotate-animation 0.85s linear 0s infinite;
 }
 
+/* De onzichtbare audio elementen. */
+.backgroundMusic, .voiceOver {
+    display: none;
+}
 
 /* De video elementen nodig voor de video's in de 3D omgeving. */
 .videoSwap, .videoVittoria, .videoRecord, .videoJumbo {
